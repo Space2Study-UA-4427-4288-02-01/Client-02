@@ -49,13 +49,7 @@ describe('EnhancedTableRow', () => {
   })
 
   it('should call handleSelectClick when checkbox is clicked', async () => {
-    render(
-      <table>
-        <tbody>
-          <EnhancedTableRow {...baseProps} />
-        </tbody>
-      </table>
-    )
+    renderRow()
 
     const checkbox = screen.getByRole('checkbox')
     await userEvent.click(checkbox)
