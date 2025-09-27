@@ -3,6 +3,7 @@ import { vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import EnhancedTableRow from '~/components/enhanced-table/enhanced-table-row/EnhancedTableRow'
+import { BrowserRouter } from 'react-router-dom'
 
 describe('EnhancedTableRow', () => {
   const mockHandleSelectClick = vi.fn()
@@ -30,16 +31,20 @@ describe('EnhancedTableRow', () => {
     vi.clearAllMocks()
   })
 
-  it('should render table row with correct data', () => {
+  const renderRow = (props = {}) =>
     render(
-      <table>
-        <tbody>
-          <EnhancedTableRow {...baseProps} />
-        </tbody>
-      </table>
+      <BrowserRouter>
+        <table>
+          <tbody>
+            <EnhancedTableRow {...baseProps} {...props} />
+          </tbody>
+        </table>
+      </BrowserRouter>
     )
 
-    expect(screen.getByText('Wine A')).toBeInTheDocument()
+  it('should render table row with correct data', () => {
+    renderRow()
+    expect(screen.getByText('Jhon')).toBeInTheDocument()
     expect(screen.getByText('20')).toBeInTheDocument()
   })
 
@@ -59,13 +64,7 @@ describe('EnhancedTableRow', () => {
   })
 
   it('should render action menu when menu icon is clicked', async () => {
-    render(
-      <table>
-        <tbody>
-          <EnhancedTableRow {...baseProps} />
-        </tbody>
-      </table>
-    )
+    renderRow()
 
     const menuIcon = screen.getByTestId('menu-icon')
     await userEvent.click(menuIcon)
@@ -75,13 +74,7 @@ describe('EnhancedTableRow', () => {
   })
 
   it('should call onAction function when clicking on the menu item', async () => {
-    render(
-      <table>
-        <tbody>
-          <EnhancedTableRow {...baseProps} />
-        </tbody>
-      </table>
-    )
+    renderRow()
 
     const menuIcon = screen.getByTestId('menu-icon')
     await userEvent.click(menuIcon)
@@ -94,13 +87,7 @@ describe('EnhancedTableRow', () => {
   })
 
   it('should close menu when "escape" is pressed', async () => {
-    render(
-      <table>
-        <tbody>
-          <EnhancedTableRow {...baseProps} />
-        </tbody>
-      </table>
-    )
+    renderRow()
 
     const menuIcon = screen.getByTestId('menu-icon')
     await userEvent.click(menuIcon)
