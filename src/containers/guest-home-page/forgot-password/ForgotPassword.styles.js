@@ -25,8 +25,7 @@ export const styles = {
       mb: '16px'
     },
     description: {
-      typography: 'body2',
-      mb: '20px'
+      typography: 'body2'
     }
   }
 }
