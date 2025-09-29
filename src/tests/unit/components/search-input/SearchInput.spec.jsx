@@ -12,17 +12,19 @@ describe('SearchInput', () => {
     render(<SearchInput search={searchVal} setSearch={setSearchMock} />)
   }
 
+  const getInput = () => screen.getByRole('textbox')
+
   it('renders with initial value', () => {
     createWrapper('initial')
 
-    const input = screen.getByRole('textbox')
+    const input = getInput()
     expect(input.value).toBe('initial')
   })
 
   it('updates local state when typing', async () => {
     createWrapper()
 
-    const input = screen.getByRole('textbox')
+    const input = getInput()
     await user.type(input, 'hello')
 
     expect(input.value).toBe('hello')
@@ -32,7 +34,7 @@ describe('SearchInput', () => {
   it('calls setSearch when pressing Enter', async () => {
     createWrapper()
 
-    const input = screen.getByRole('textbox')
+    const input = getInput()
     await user.type(input, 'world{enter}')
 
     expect(setSearchMock).toHaveBeenCalledWith('world')
@@ -41,7 +43,7 @@ describe('SearchInput', () => {
   it('calls setSearch when clicking search icon', async () => {
     createWrapper()
 
-    const input = screen.getByRole('textbox')
+    const input = getInput()
     await user.type(input, 'react')
 
     const searchBtn = screen.getByTestId('search-icon')
