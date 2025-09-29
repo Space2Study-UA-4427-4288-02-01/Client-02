@@ -1,54 +1,60 @@
 import { vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import SearchInput from '~/components/search-input/SearchInput'
 
 describe('SearchInput', () => {
-  let setSearchMock = vi.fn()
+  let setSearchMock
+  const user = userEvent.setup()
+
+  const createWrapper = (searchVal = '') => {
+    setSearchMock = vi.fn()
+    render(<SearchInput search={searchVal} setSearch={setSearchMock} />)
+  }
 
   it('renders with initial value', () => {
-    render(<SearchInput search='initial' setSearch={setSearchMock} />)
+    createWrapper('initial')
 
     const input = screen.getByRole('textbox')
     expect(input.value).toBe('initial')
   })
 
-  it('updates local state when typing', () => {
-    render(<SearchInput search='' setSearch={setSearchMock} />)
+  it('updates local state when typing', async () => {
+    createWrapper()
 
     const input = screen.getByRole('textbox')
-    fireEvent.change(input, { target: { value: 'hello' } })
+    await user.type(input, 'hello')
 
     expect(input.value).toBe('hello')
     expect(setSearchMock).not.toHaveBeenCalled()
   })
 
-  it('calls setSearch when pressing Enter', () => {
-    render(<SearchInput search='' setSearch={setSearchMock} />)
+  it('calls setSearch when pressing Enter', async () => {
+    createWrapper()
 
     const input = screen.getByRole('textbox')
-    fireEvent.change(input, { target: { value: 'world' } })
-    fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 })
+    await user.type(input, 'world{enter}')
 
     expect(setSearchMock).toHaveBeenCalledWith('world')
   })
 
-  it('calls setSearch when clicking search icon', () => {
-    render(<SearchInput search='' setSearch={setSearchMock} />)
+  it('calls setSearch when clicking search icon', async () => {
+    createWrapper()
 
     const input = screen.getByRole('textbox')
-    fireEvent.change(input, { target: { value: 'react' } })
+    await user.type(input, 'react')
 
     const searchBtn = screen.getByTestId('search-icon')
-    fireEvent.click(searchBtn)
+    await user.click(searchBtn)
 
     expect(setSearchMock).toHaveBeenCalledWith('react')
   })
 
-  it('clears search when clicking clear icon', () => {
-    render(<SearchInput search='some text' setSearch={setSearchMock} />)
+  it('clears search when clicking clear icon', async () => {
+    createWrapper('some text')
 
     const clearBtn = screen.getByTestId('delete-icon')
-    fireEvent.click(clearBtn)
+    await user.click(clearBtn)
 
     expect(setSearchMock).toHaveBeenCalledWith('')
   })
