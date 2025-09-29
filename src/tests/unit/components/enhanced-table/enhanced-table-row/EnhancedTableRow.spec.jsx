@@ -1,4 +1,3 @@
-import { describe } from 'vitest'
 import { vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -29,28 +28,23 @@ describe('EnhancedTableRow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-  })
-
-  const renderRow = (props = {}) =>
     render(
       <BrowserRouter>
         <table>
           <tbody>
-            <EnhancedTableRow {...baseProps} {...props} />
+            <EnhancedTableRow {...baseProps} />
           </tbody>
         </table>
       </BrowserRouter>
     )
+  })
 
   it('should render table row with correct data', () => {
-    renderRow()
     expect(screen.getByText('Jhon')).toBeInTheDocument()
     expect(screen.getByText('20')).toBeInTheDocument()
   })
 
   it('should call handleSelectClick when checkbox is clicked', async () => {
-    renderRow()
-
     const checkbox = screen.getByRole('checkbox')
     await userEvent.click(checkbox)
     expect(mockHandleSelectClick).toHaveBeenCalled()
@@ -58,8 +52,6 @@ describe('EnhancedTableRow', () => {
   })
 
   it('should render action menu when menu icon is clicked', async () => {
-    renderRow()
-
     const menuIcon = screen.getByTestId('menu-icon')
     await userEvent.click(menuIcon)
 
@@ -68,8 +60,6 @@ describe('EnhancedTableRow', () => {
   })
 
   it('should call onAction function when clicking on the menu item', async () => {
-    renderRow()
-
     const menuIcon = screen.getByTestId('menu-icon')
     await userEvent.click(menuIcon)
 
@@ -81,13 +71,12 @@ describe('EnhancedTableRow', () => {
   })
 
   it('should close menu when "escape" is pressed', async () => {
-    renderRow()
-
     const menuIcon = screen.getByTestId('menu-icon')
     await userEvent.click(menuIcon)
 
     expect(screen.getByRole('menu')).toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' })
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
   })
 })
