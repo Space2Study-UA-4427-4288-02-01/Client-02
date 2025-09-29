@@ -1,8 +1,9 @@
 import { vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import EnhancedTableRow from '~/components/enhanced-table/enhanced-table-row/EnhancedTableRow'
 import { BrowserRouter } from 'react-router-dom'
+import { waitFor } from '@testing-library/react'
 
 describe('EnhancedTableRow', () => {
   const mockHandleSelectClick = vi.fn()
@@ -74,9 +75,11 @@ describe('EnhancedTableRow', () => {
     const menuIcon = screen.getByTestId('menu-icon')
     await userEvent.click(menuIcon)
 
-    expect(screen.getByRole('menu')).toBeInTheDocument()
+    expect(screen.queryByRole('menu')).toBeInTheDocument()
 
-    fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' })
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => {
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    })
   })
 })
