@@ -11,6 +11,10 @@ import teachImg from '~/assets/img/guest-home-page/teachImg.png'
 import { UserRoleEnum } from '~/types'
 import { styles } from '~/containers/guest-home-page/styles/WhatCanYouDo.styles'
 
+interface WhatCanYouDoProps {
+  onSelectRole: (role: UserRoleEnum) => void
+}
+
 const cardData = [
   {
     img: learnImg,
@@ -28,12 +32,12 @@ const cardData = [
   }
 ]
 
-const WhatCanYouDo = () => {
+const WhatCanYouDo = ({ onSelectRole }: WhatCanYouDoProps) => {
   const { t } = useTranslation()
 
   const cards = cardData.map((item) => (
     <InfoCard
-      action={() => {}}
+      action={() => onSelectRole(item.actionType)}
       actionLabel={t(item.actionLabel)}
       cardWidth={460}
       description={t(item.description)}
