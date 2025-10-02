@@ -1,12 +1,13 @@
 import { useCallback, useEffect } from 'react'
 import { useHref } from 'react-router-dom'
-
-import { useGoogleAuthMutation } from '~/services/auth-service'
+import {
+  useGoogleAuthMutation,
+  useGoogleSignupMutation
+} from '~/services/auth-service'
 import { useModalContext } from '~/context/modal-context'
 import { useSnackBarContext } from '~/context/snackbar-context'
 import { scrollToHash } from '~/utils/hash-scroll'
 import useBreakpoints from '~/hooks/use-breakpoints'
-
 import { snackbarVariants } from '~/constants'
 import { styles } from '~/containers/guest-home-page/google-button/GoogleButton.styles'
 
@@ -16,11 +17,14 @@ const GoogleButton = ({ role, route, buttonWidth, type }) => {
   const { closeModal } = useModalContext()
   const { setAlert } = useSnackBarContext()
   const [googleAuth] = useGoogleAuthMutation()
+  const [googleSignup] = useGoogleSignupMutation()
+
+  const method = type === 'login' ? googleAuth : googleSignup
 
   const handleCredentialResponse = useCallback(
     async (token) => {
       try {
-        await googleAuth({ token, role }).unwrap()
+        await method({ token, role }).unwrap()
         closeModal()
       } catch (e) {
         setAlert({
@@ -33,7 +37,7 @@ const GoogleButton = ({ role, route, buttonWidth, type }) => {
         }
       }
     },
-    [googleAuth, role, closeModal, setAlert, ref]
+    [method, role, closeModal, setAlert, ref]
   )
 
   useEffect(() => {

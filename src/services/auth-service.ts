@@ -64,6 +64,20 @@ export const authService = appApi.injectEndpoints({
         }
       }
     }),
+    googleSignup: build.mutation<SignupResponse, GoogleAuthParams>({
+      query: (body) => ({ url: URLs.auth.googleSignup, method: POST, body }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          console.log('googleAuth data', data)
+
+          // TODO - handle after signup
+          // dispatch(setUser(data.accessToken))
+        } catch {
+          dispatch(logout())
+        }
+      }
+    }),
     logout: build.mutation<void, void>({
       query: () => ({ url: URLs.auth.logout, method: POST }),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
@@ -78,5 +92,6 @@ export const {
   useSignUpMutation,
   useLoginMutation,
   useGoogleAuthMutation,
+  useGoogleSignupMutation,
   useLogoutMutation
 } = authService
