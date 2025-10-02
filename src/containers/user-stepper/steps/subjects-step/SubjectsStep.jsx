@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 
-import { styles } from '~/containers/tutor-home-page/subjects-step/SubjectsStep.styles'
+import { styles } from '~/containers/user-stepper/steps/subjects-step/SubjectsStep.styles'
 
 const SubjectsStep = ({ btnsBox }) => {
   return (

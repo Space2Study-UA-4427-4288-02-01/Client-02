@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useAppSelector } from '~/hooks/use-redux'
 import { useModalContext } from '~/context/modal-context'
 
-import UserStepsWrapper from '~/components/user-steps-wrapper/UserStepsWrapper'
+import UserStepper from '~/containers/user-stepper/UserStepper'
 import PageWrapper from '~/components/page-wrapper/PageWrapper'
 import FindBlock from '~/components/find-block/FindBlock'
 
@@ -17,7 +17,7 @@ const TutorHome = () => {
   useEffect(() => {
     if (isFirstLogin) {
       openModal({
-        component: <UserStepsWrapper userRole={userRole} />,
+        component: <UserStepper userRole={userRole} />,
         paperProps: {
           sx: styles.modal
         }

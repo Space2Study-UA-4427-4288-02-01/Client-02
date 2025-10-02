@@ -5,22 +5,22 @@ import StepWrapper from '~/components/step-wrapper/StepWrapper'
 
 import { StepProvider } from '~/context/step-context'
 
-import GeneralInfoStep from '~/containers/tutor-home-page/general-info-step/GeneralInfoStep'
-import AddPhotoStep from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep'
-import SubjectsStep from '~/containers/tutor-home-page/subjects-step/SubjectsStep'
-import LanguageStep from '~/containers/tutor-home-page/language-step/LanguageStep'
+import GeneralInfoStep from '~/containers/user-stepper/steps/general-info-step/GeneralInfoStep'
+import AddPhotoStep from '~/containers/user-stepper/steps/add-photo-step/AddPhotoStep'
+import SubjectsStep from '~/containers/user-stepper/steps/subjects-step/SubjectsStep'
+import LanguageStep from '~/containers/user-stepper/steps/language-step/LanguageStep'
 
 import {
   tutorStepLabels,
   initialValues
-} from '~/components/user-steps-wrapper/constants'
+} from '~/containers/user-stepper/constants'
 import { student } from '~/constants'
 
-interface UserStepsWrapperProps {
+interface StepperProps {
   userRole: string
 }
 
-const UserStepsWrapper: FC<UserStepsWrapperProps> = ({ userRole }) => {
+const UserStepper: FC<StepperProps> = ({ userRole }) => {
   const [isUserFetched, setIsUserFetched] = useState(false)
   const dispatch = useAppDispatch()
 
@@ -48,4 +48,4 @@ const UserStepsWrapper: FC<UserStepsWrapperProps> = ({ userRole }) => {
   )
 }
 
-export default UserStepsWrapper
+export default UserStepper
