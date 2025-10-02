@@ -7,7 +7,7 @@
     "photo": "Photo"
   },
   "generalInfo": {
-    "title": "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.",
+    "title": "Please complete your profile details.",
     "firstName": "First Name",
     "fnError": "Please enter your first name",
     "lastName": "Last Name",
