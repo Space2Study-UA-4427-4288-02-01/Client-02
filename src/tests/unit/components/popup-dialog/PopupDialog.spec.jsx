@@ -1,51 +1,69 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 
 import PopupDialog from '~/components/popup-dialog/PopupDialog'
 
 const closeModal = vi.fn()
 const closeModalAfterDelay = vi.fn()
-const setFullScreen = vi.fn()
 
 const props = {
   content: 'test',
   closeModal,
   closeModalAfterDelay,
   timerId: null,
-  isFullScreen: true,
-  setFullScreen
+  paperProps: {}
 }
 
-vi.mock('~/hooks/use-confirm', () => {
-  return {
-    default: () => ({ checkConfirmation: () => true })
-  }
-})
+const renderComponent = (timerId = null) => {
+  render(<PopupDialog {...props} timerId={timerId} />)
+}
 
-describe('Popup dialog test', () => {
+describe('PopupDialog', () => {
+  const user = userEvent.setup()
+
   beforeEach(() => {
-    render(<PopupDialog {...props} />)
+    vi.clearAllMocks()
   })
 
-  it('should have content text', () => {
-    const content = screen.getByText(props.content)
-
-    expect(content).toBeInTheDocument()
-  })
-})
-
-describe('Popup dialog test with timerId', () => {
-  const propsWithTimerId = { ...props, timerId: 21 }
-  beforeEach(() => {
-    render(<PopupDialog {...propsWithTimerId} />)
+  it('should render content text', () => {
+    renderComponent()
+    expect(screen.getByText(props.content)).toBeInTheDocument()
   })
 
-  it('should close popup after delay', async () => {
+  it('should close popup when mouse leaves content with timerId', async () => {
+    renderComponent(21)
     const popupContent = screen.getByTestId('popupContent')
 
-    fireEvent.mouseEnter(popupContent)
-    fireEvent.mouseLeave(popupContent)
+    await user.hover(popupContent)
+    await user.unhover(popupContent)
 
     await waitFor(() => expect(closeModalAfterDelay).toHaveBeenCalled())
+  })
+
+  it('should close popup when clicking on overlay', async () => {
+    renderComponent()
+    const dialog = document.querySelector('.MuiBackdrop-root')
+
+    await user.click(dialog)
+
+    expect(closeModal).toHaveBeenCalled()
+  })
+
+  it('should close popup when pressing Escape key', async () => {
+    renderComponent()
+
+    await user.keyboard('{Escape}')
+
+    expect(closeModal).toHaveBeenCalled()
+  })
+
+  it('should close popup when clicking close icon button', async () => {
+    renderComponent()
+    const closeButton = screen.getByRole('button')
+
+    await user.click(closeButton)
+
+    expect(closeModal).toHaveBeenCalled()
   })
 })
