@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import { style } from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep.style'
+import { style } from '~/containers/user-stepper/steps/add-photo-step/AddPhotoStep.style'
 
 const AddPhotoStep = ({ btnsBox }) => {
   return (

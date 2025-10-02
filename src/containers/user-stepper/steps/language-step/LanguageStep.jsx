@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 
-import { styles } from '~/containers/tutor-home-page/language-step/LanguageStep.styles'
+import { styles } from '~/containers/user-stepper/steps/language-step/LanguageStep.styles'
 import img from '~/assets/img/tutor-home-page/become-tutor/languages.svg'
 
 const LanguageStep = ({ btnsBox }) => {
