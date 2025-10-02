@@ -15,6 +15,8 @@ import ResetPassword from '~/containers/guest-home-page/reset-password/ResetPass
 import WhoWeAre from '~/containers/guest-home-page/who-we-are/WhoWeAre'
 import { useModalContext } from '~/context/modal-context'
 import { styles } from '~/pages/guest-home-page/GuestHome.styles'
+import { UserRoleEnum } from '~/types'
+import SignUpDialog from '~/containers/guest-home-page/sign-up-dialog/SignUpDialog'
 
 const GuestHomePage = () => {
   const { openModal } = useModalContext()
@@ -44,12 +46,16 @@ const GuestHomePage = () => {
     setSearchParams([])
   }, [searchParams, setSearchParams, openModal])
 
+  const handleSelectRole = (role: UserRoleEnum) => {
+    openModal({ component: <SignUpDialog role={role} /> })
+  }
+
   return (
     <Box sx={styles.root}>
       <Welcome />
       <PageWrapper sx={styles.sectionsWrapper}>
         <FeatureBlock items={descriptionTimes} />
-        <WhatCanYouDo />
+        <WhatCanYouDo onSelectRole={handleSelectRole} />
         <HowItWorks />
         <WhoWeAre />
       </PageWrapper>
