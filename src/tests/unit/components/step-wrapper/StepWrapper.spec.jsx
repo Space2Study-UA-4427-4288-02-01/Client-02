@@ -8,7 +8,7 @@ import {
   studentStepLabels,
   tutorStepLabels,
   initialValues
-} from '~/components/user-steps-wrapper/constants'
+} from '~/containers/user-stepper/constants'
 
 import { renderWithProviders } from '~tests/test-utils'
 
