@@ -55,17 +55,24 @@ const SignUpForm: FC<SignUpFormProps> = ({
       <Box sx={styles.nameGroup}>
         <AppTextField
           autoFocus
+          errorMsg={errors.firstName && t(errors.firstName)}
           label={t('common.labels.firstName')}
+          onBlur={handleBlur('firstName')}
+          onChange={handleChange('firstName')}
           required
           value={data.firstName}
         />
         <AppTextField
+          errorMsg={errors.lastName && t(errors.lastName)}
           label={t('common.labels.lastName')}
+          onBlur={handleBlur('lastName')}
+          onChange={handleChange('lastName')}
           required
           value={data.lastName}
         />
       </Box>
       <AppTextField
+        errorMsg={errors.email && t(errors.email)}
         fullWidth
         label={t('common.labels.email')}
         onBlur={handleBlur('email')}
@@ -75,6 +82,7 @@ const SignUpForm: FC<SignUpFormProps> = ({
       />
       <AppTextField
         InputProps={passwordVisibility}
+        errorMsg={errors.password && t(errors.password)}
         fullWidth
         label={t('common.labels.password')}
         onBlur={handleBlur('password')}
@@ -85,6 +93,7 @@ const SignUpForm: FC<SignUpFormProps> = ({
       />
       <AppTextField
         InputProps={confirmPasswordVisibility}
+        errorMsg={errors.confirmPassword && t(errors.confirmPassword)}
         fullWidth
         label={t('common.labels.confirmPassword')}
         onBlur={handleBlur('confirmPassword')}

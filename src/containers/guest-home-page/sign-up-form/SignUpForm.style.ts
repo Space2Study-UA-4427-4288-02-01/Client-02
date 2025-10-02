@@ -21,11 +21,5 @@ export const styles = {
     color: 'primary.900',
     textDecoration: 'underline',
     cursor: 'pointer'
-  },
-  continue: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 2,
-    my: 2
   }
 }

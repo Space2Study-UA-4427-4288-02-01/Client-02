@@ -5,7 +5,13 @@ import useForm from '~/hooks/use-form'
 import SignUpForm from '~/containers/guest-home-page/sign-up-form/SignUpForm'
 import signStudentImg from '~/assets/img/signup-dialog/student.svg'
 import signTutorImg from '~/assets/img/signup-dialog/tutor.svg'
-import { email } from '~/utils/validations/login'
+import {
+  firstName,
+  lastName,
+  email,
+  password,
+  confirmPassword
+} from '~/utils/validations/login'
 import { styles } from '~/containers/guest-home-page/sign-up-dialog/SignUpDialog.styles'
 import { UserRoleEnum } from '~/types'
 import { FC } from 'react'
@@ -27,7 +33,7 @@ const SignUpDialog: FC<SignUpDialogProps> = ({ role }) => {
         password: '',
         confirmPassword: ''
       },
-      validations: { email }
+      validations: { firstName, lastName, email, password, confirmPassword }
     }
   )
 
