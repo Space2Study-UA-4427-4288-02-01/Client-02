@@ -58,7 +58,7 @@ const SignUpDialog: FC<SignUpDialogProps> = ({ role }) => {
           />
           <GoogleLogin
             buttonWidth={styles.form.maxWidth}
-            role={undefined}
+            role={role}
             type={signup}
           />
         </Box>

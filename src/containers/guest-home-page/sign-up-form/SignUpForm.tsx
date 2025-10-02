@@ -44,7 +44,7 @@ const SignUpForm: FC<SignUpFormProps> = ({
   const {
     inputVisibility: confirmPasswordVisibility,
     showInputText: showConfirmPassword
-  } = useInputVisibility(errors?.password)
+  } = useInputVisibility(errors?.confirmPassword)
 
   const { t } = useTranslation()
 
