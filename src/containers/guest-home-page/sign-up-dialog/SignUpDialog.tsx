@@ -31,12 +31,18 @@ const SignUpDialog: FC<SignUpDialogProps> = ({ role }) => {
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        acceptTerms: false
       },
-      validations: { firstName, lastName, email, password, confirmPassword }
+      validations: {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword
+      }
     }
   )
-
   const isStudent = role === UserRoleEnum.Student
 
   return (

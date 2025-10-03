@@ -6,11 +6,12 @@ import AppTextField from '~/components/app-text-field/AppTextField'
 import { FC } from 'react'
 import { styles } from '~/containers/guest-home-page/sign-up-form/SignUpForm.style'
 import AppButton from '~/components/app-button/AppButton'
-import CheckBox from '@mui/material/Checkbox'
+import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { Link as RouterLink } from 'react-router-dom'
 import Link from '@mui/material/Link'
 import { guestRoutes } from '~/router/constants/guestRoutes'
+import { useAppSelector } from '~/hooks/use-redux'
 
 interface SignUpFormData {
   firstName: string
@@ -18,6 +19,7 @@ interface SignUpFormData {
   email: string
   password: string
   confirmPassword: string
+  acceptTerms: boolean
 }
 
 interface SignUpFormProps {
@@ -30,6 +32,14 @@ interface SignUpFormProps {
   ) => (e: React.FocusEvent<HTMLInputElement>) => void
   data: SignUpFormData
   errors: Partial<Record<keyof SignUpFormData, string>>
+}
+
+interface AppMainState {
+  authLoading: boolean
+}
+
+interface RootState {
+  appMain: AppMainState
 }
 
 const SignUpForm: FC<SignUpFormProps> = ({
@@ -47,6 +57,8 @@ const SignUpForm: FC<SignUpFormProps> = ({
   } = useInputVisibility(errors?.confirmPassword)
 
   const { t } = useTranslation()
+
+  const { authLoading } = useAppSelector((state: RootState) => state.appMain)
 
   const { privacyPolicy, termOfUse } = guestRoutes
 
@@ -103,7 +115,12 @@ const SignUpForm: FC<SignUpFormProps> = ({
         value={data.confirmPassword}
       />
       <FormControlLabel
-        control={<CheckBox />}
+        control={
+          <Checkbox
+            checked={data.acceptTerms}
+            onChange={handleChange('acceptTerms')}
+          />
+        }
         label={
           <Typography variant='body2'>
             {t('signup.iAgree')}{' '}
@@ -122,13 +139,24 @@ const SignUpForm: FC<SignUpFormProps> = ({
               to={privacyPolicy.path}
               underline='always'
             >
-              {t('common.labels.privacyPolicy')}
-            </Link>
+              {t('common.labels.privacyPolicy')}{' '}
+            </Link>{' '}
+            *
           </Typography>
         }
-        sx={{ mb: 2, '& .MuiFormControlLabel-label': { fontSize: '14px' } }}
+        sx={{
+          mb: 2
+        }}
       />
-      <AppButton sx={styles.signUpButton} type='submit'>
+      <AppButton
+        disabled={
+          Object.values(errors).some((err) => Boolean(err)) ||
+          !Object.values(data).every((val) => Boolean(val))
+        }
+        loading={authLoading}
+        sx={styles.signUpButton}
+        type='submit'
+      >
         {t('common.labels.signup')}
       </AppButton>
     </Box>
