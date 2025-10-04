@@ -62,6 +62,10 @@ const SignUpForm: FC<SignUpFormProps> = ({
 
   const { privacyPolicy, termOfUse } = guestRoutes
 
+  const isInvalid =
+    Object.values(errors).some((err) => Boolean(err)) ||
+    !Object.values(data).every((val) => Boolean(val))
+
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <Box sx={styles.nameGroup}>
@@ -149,10 +153,7 @@ const SignUpForm: FC<SignUpFormProps> = ({
         }}
       />
       <AppButton
-        disabled={
-          Object.values(errors).some((err) => Boolean(err)) ||
-          !Object.values(data).every((val) => Boolean(val))
-        }
+        disabled={isInvalid}
         loading={authLoading}
         sx={styles.signUpButton}
         type='submit'
