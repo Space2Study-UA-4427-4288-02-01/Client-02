@@ -16,23 +16,49 @@ import { styles } from '~/containers/guest-home-page/sign-up-dialog/SignUpDialog
 import { UserRoleEnum } from '~/types'
 import { FC } from 'react'
 import GoogleLogin from '../google-login/GoogleLogin'
-import { signup } from '~/constants'
+import { signup, snackbarVariants } from '~/constants'
+import { useSnackBarContext } from '~/context/snackbar-context'
+import { useSignUpMutation } from '~/services/auth-service'
+import { useModalContext } from '~/context/modal-context'
 
 interface SignUpDialogProps {
   role: UserRoleEnum
 }
 
 const SignUpDialog: FC<SignUpDialogProps> = ({ role }) => {
+  const { closeModal } = useModalContext()
+  const [signUpUser] = useSignUpMutation()
+  const { setAlert } = useSnackBarContext()
   const { t } = useTranslation()
   const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
     {
+      onSubmit: async () => {
+        try {
+          await signUpUser(data).unwrap()
+          closeModal()
+        } catch (error) {
+          if (error && typeof error === 'object' && 'data' in error) {
+            const err = error as { data?: { code?: string } }
+            setAlert({
+              severity: snackbarVariants.error,
+              message: `errors.${err.data?.code ?? 'unknown'}`
+            })
+          } else {
+            setAlert({
+              severity: snackbarVariants.error,
+              message: 'errors.unknown'
+            })
+          }
+        }
+      },
       initialValues: {
         firstName: '',
         lastName: '',
         email: '',
         password: '',
         confirmPassword: '',
-        acceptTerms: false
+        acceptTerms: false,
+        role: role
       },
       validations: {
         firstName,
