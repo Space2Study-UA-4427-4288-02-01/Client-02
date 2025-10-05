@@ -25,6 +25,32 @@ interface SignUpDialogProps {
   role: UserRoleEnum
 }
 
+interface ApiError {
+  status?: number
+  data?: {
+    code?: string
+    message?: string
+    [key: string]: unknown
+  }
+}
+
+function isApiError(error: unknown): error is ApiError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'data' in error &&
+    typeof (error as { data?: { code?: string } }).data === 'object'
+  )
+}
+
+const getErrorMessage = (error: unknown): string => {
+  if (isApiError(error)) {
+    if (error.data?.code) return `errors.${error.data.code}`
+    if (error.data?.message) return `errors.${error.data.message}`
+  }
+  return 'errors.unknownError'
+}
+
 const SignUpDialog: FC<SignUpDialogProps> = ({ role }) => {
   const { closeModal } = useModalContext()
   const [signUpUser] = useSignUpMutation()
@@ -37,16 +63,15 @@ const SignUpDialog: FC<SignUpDialogProps> = ({ role }) => {
           await signUpUser(data).unwrap()
           closeModal()
         } catch (error) {
-          if (error && typeof error === 'object' && 'data' in error) {
-            const err = error as { data?: { code?: string } }
+          if (isApiError(error)) {
             setAlert({
               severity: snackbarVariants.error,
-              message: `errors.${err.data?.code ?? 'unknown'}`
+              message: getErrorMessage(error)
             })
           } else {
             setAlert({
               severity: snackbarVariants.error,
-              message: 'errors.unknown'
+              message: getErrorMessage(error)
             })
           }
         }

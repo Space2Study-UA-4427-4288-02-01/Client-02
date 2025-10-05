@@ -34,14 +34,6 @@ interface SignUpFormProps {
   errors: Partial<Record<keyof SignUpFormData, string>>
 }
 
-interface AppMainState {
-  authLoading: boolean
-}
-
-interface RootState {
-  appMain: AppMainState
-}
-
 const SignUpForm: FC<SignUpFormProps> = ({
   handleSubmit,
   handleChange,
@@ -58,7 +50,7 @@ const SignUpForm: FC<SignUpFormProps> = ({
 
   const { t } = useTranslation()
 
-  const { authLoading } = useAppSelector((state: RootState) => state.appMain)
+  const { authLoading } = useAppSelector((state) => state.appMain)
 
   const { privacyPolicy, termOfUse } = guestRoutes
 
