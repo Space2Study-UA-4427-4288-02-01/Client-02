@@ -13,7 +13,7 @@ import Link from '@mui/material/Link'
 import { guestRoutes } from '~/router/constants/guestRoutes'
 import { useAppSelector } from '~/hooks/use-redux'
 
-export interface SignUpFormData {
+interface SignUpFormData {
   firstName: string
   lastName: string
   email: string
