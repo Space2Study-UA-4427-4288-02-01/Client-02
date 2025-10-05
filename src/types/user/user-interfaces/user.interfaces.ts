@@ -88,3 +88,6 @@ export interface AccessToken {
   role: UserRole
   isFirstLogin: boolean
 }
+export interface ConfirmResponse {
+  message: string
+}

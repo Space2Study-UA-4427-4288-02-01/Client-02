@@ -1,5 +1,6 @@
 export const guestRoutes = {
   home: { route: '/', path: '/' },
+  confirmEmail: { route: 'confirm-email', path: '/confirm-email' },
   welcome: { route: 'welcome', path: '/#welcome' },
   student: { route: 'student', path: 'student' },
   tutor: { route: 'tutor', path: 'tutor' },
