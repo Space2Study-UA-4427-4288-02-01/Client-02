@@ -42,7 +42,15 @@ export const AuthService = {
 export const authService = appApi.injectEndpoints({
   endpoints: (build) => ({
     signUp: build.mutation<SignupResponse, SignupParams>({
-      query: (body) => ({ url: URLs.auth.signup, method: POST, body })
+      query: (body) => ({ url: URLs.auth.signup, method: POST, body }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(setUser(data.userId))
+        } catch (error) {
+          console.log('SignUp failed', error)
+        }
+      }
     }),
     login: build.mutation<LoginResponse, LoginParams>({
       query: (body) => ({ url: URLs.auth.login, method: POST, body }),
@@ -71,10 +79,7 @@ export const authService = appApi.injectEndpoints({
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled
-          console.log('googleAuth data', data)
-
-          // TODO - handle after signup
-          // dispatch(setUser(data.accessToken))
+          dispatch(setUser(data.userId))
         } catch {
           dispatch(logout())
         }

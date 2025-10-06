@@ -6,11 +6,12 @@ import AppTextField from '~/components/app-text-field/AppTextField'
 import { FC } from 'react'
 import { styles } from '~/containers/guest-home-page/sign-up-form/SignUpForm.style'
 import AppButton from '~/components/app-button/AppButton'
-import CheckBox from '@mui/material/Checkbox'
+import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { Link as RouterLink } from 'react-router-dom'
 import Link from '@mui/material/Link'
 import { guestRoutes } from '~/router/constants/guestRoutes'
+import { useAppSelector } from '~/hooks/use-redux'
 
 interface SignUpFormData {
   firstName: string
@@ -18,6 +19,7 @@ interface SignUpFormData {
   email: string
   password: string
   confirmPassword: string
+  acceptTerms: boolean
 }
 
 interface SignUpFormProps {
@@ -48,24 +50,37 @@ const SignUpForm: FC<SignUpFormProps> = ({
 
   const { t } = useTranslation()
 
+  const { authLoading } = useAppSelector((state) => state.appMain)
+
   const { privacyPolicy, termOfUse } = guestRoutes
+
+  const isInvalid =
+    Object.values(errors).some((err) => Boolean(err)) ||
+    !Object.values(data).every((val) => Boolean(val))
 
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <Box sx={styles.nameGroup}>
         <AppTextField
           autoFocus
+          errorMsg={errors.firstName && t(errors.firstName)}
           label={t('common.labels.firstName')}
+          onBlur={handleBlur('firstName')}
+          onChange={handleChange('firstName')}
           required
           value={data.firstName}
         />
         <AppTextField
+          errorMsg={errors.lastName && t(errors.lastName)}
           label={t('common.labels.lastName')}
+          onBlur={handleBlur('lastName')}
+          onChange={handleChange('lastName')}
           required
           value={data.lastName}
         />
       </Box>
       <AppTextField
+        errorMsg={errors.email && t(errors.email)}
         fullWidth
         label={t('common.labels.email')}
         onBlur={handleBlur('email')}
@@ -75,6 +90,7 @@ const SignUpForm: FC<SignUpFormProps> = ({
       />
       <AppTextField
         InputProps={passwordVisibility}
+        errorMsg={errors.password && t(errors.password)}
         fullWidth
         label={t('common.labels.password')}
         onBlur={handleBlur('password')}
@@ -85,6 +101,7 @@ const SignUpForm: FC<SignUpFormProps> = ({
       />
       <AppTextField
         InputProps={confirmPasswordVisibility}
+        errorMsg={errors.confirmPassword && t(errors.confirmPassword)}
         fullWidth
         label={t('common.labels.confirmPassword')}
         onBlur={handleBlur('confirmPassword')}
@@ -94,7 +111,12 @@ const SignUpForm: FC<SignUpFormProps> = ({
         value={data.confirmPassword}
       />
       <FormControlLabel
-        control={<CheckBox />}
+        control={
+          <Checkbox
+            checked={data.acceptTerms}
+            onChange={handleChange('acceptTerms')}
+          />
+        }
         label={
           <Typography variant='body2'>
             {t('signup.iAgree')}{' '}
@@ -113,13 +135,21 @@ const SignUpForm: FC<SignUpFormProps> = ({
               to={privacyPolicy.path}
               underline='always'
             >
-              {t('common.labels.privacyPolicy')}
-            </Link>
+              {t('common.labels.privacyPolicy')}{' '}
+            </Link>{' '}
+            *
           </Typography>
         }
-        sx={{ mb: 2, '& .MuiFormControlLabel-label': { fontSize: '14px' } }}
+        sx={{
+          mb: 2
+        }}
       />
-      <AppButton sx={styles.signUpButton} type='submit'>
+      <AppButton
+        disabled={isInvalid}
+        loading={authLoading}
+        sx={styles.signUpButton}
+        type='submit'
+      >
         {t('common.labels.signup')}
       </AppButton>
     </Box>

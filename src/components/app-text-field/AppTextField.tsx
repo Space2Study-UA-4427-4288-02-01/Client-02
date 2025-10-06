@@ -30,7 +30,12 @@ const AppTextField: FC<AppTextFieldProps> = ({
 
   return (
     <TextField
-      FormHelperTextProps={{ sx: styles.helperText(multiline) }}
+      FormHelperTextProps={{
+        sx: {
+          ...styles.helperText(multiline),
+          mb: errorMsg ? '7px' : 0
+        }
+      }}
       error={Boolean(errorMsg)}
       helperText={withHelperText && helperText}
       multiline={multiline}

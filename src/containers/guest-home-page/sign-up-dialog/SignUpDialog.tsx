@@ -5,32 +5,95 @@ import useForm from '~/hooks/use-form'
 import SignUpForm from '~/containers/guest-home-page/sign-up-form/SignUpForm'
 import signStudentImg from '~/assets/img/signup-dialog/student.svg'
 import signTutorImg from '~/assets/img/signup-dialog/tutor.svg'
-import { email } from '~/utils/validations/login'
+import {
+  firstName,
+  lastName,
+  email,
+  password,
+  confirmPassword
+} from '~/utils/validations/login'
 import { styles } from '~/containers/guest-home-page/sign-up-dialog/SignUpDialog.styles'
 import { UserRoleEnum } from '~/types'
 import { FC } from 'react'
 import GoogleLogin from '../google-login/GoogleLogin'
-import { signup } from '~/constants'
+import { signup, snackbarVariants } from '~/constants'
+import { useSnackBarContext } from '~/context/snackbar-context'
+import { useSignUpMutation } from '~/services/auth-service'
+import { useModalContext } from '~/context/modal-context'
 
 interface SignUpDialogProps {
   role: UserRoleEnum
 }
 
+interface ApiError {
+  status?: number
+  data?: {
+    code?: string
+    message?: string
+    [key: string]: unknown
+  }
+}
+
+function isApiError(error: unknown): error is ApiError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'data' in error &&
+    typeof (error as { data?: { code?: string } }).data === 'object'
+  )
+}
+
+const getErrorMessage = (error: unknown): string => {
+  if (isApiError(error)) {
+    if (error.data?.code) return `errors.${error.data.code}`
+    if (error.data?.message) return `errors.${error.data.message}`
+  }
+  return 'errors.unknownError'
+}
+
 const SignUpDialog: FC<SignUpDialogProps> = ({ role }) => {
+  const { closeModal } = useModalContext()
+  const [signUpUser] = useSignUpMutation()
+  const { setAlert } = useSnackBarContext()
   const { t } = useTranslation()
   const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
     {
+      onSubmit: async () => {
+        try {
+          await signUpUser(data).unwrap()
+          closeModal()
+        } catch (error) {
+          if (isApiError(error)) {
+            setAlert({
+              severity: snackbarVariants.error,
+              message: getErrorMessage(error)
+            })
+          } else {
+            setAlert({
+              severity: snackbarVariants.error,
+              message: getErrorMessage(error)
+            })
+          }
+        }
+      },
       initialValues: {
         firstName: '',
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        acceptTerms: false,
+        role: role
       },
-      validations: { email }
+      validations: {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword
+      }
     }
   )
-
   const isStudent = role === UserRoleEnum.Student
 
   return (
