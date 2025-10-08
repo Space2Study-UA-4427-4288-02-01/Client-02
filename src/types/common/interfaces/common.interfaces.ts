@@ -86,3 +86,16 @@ export interface AddDocuments {
   typeError: string
   maxQuantityFiles: number
 }
+
+export interface SignUpDialogProps {
+  role: UserRoleEnum
+}
+
+export interface ApiError {
+  status?: number
+  data?: {
+    code?: string
+    message?: string
+    [key: string]: unknown
+  }
+}

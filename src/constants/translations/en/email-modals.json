@@ -2,8 +2,14 @@
   "emailConfirm": "Your email has been successfully verified!",
   "emailNotConfirm": "Your email address has not been verified!",
   "emailAlreadyConfirm": "Your email address has already been verified!",
+  "loginButton": "Go to login",
   "emailReject": {
     "badToken": "The confirmation is either invalid or has expired. Please sign up again and confirm your email address.",
     "alreadyConfirmed": "User email has been already confirmed."
+  },
+  "infoConfirm": {
+    "titleConfirm": "Your email address needs to be verified",
+    "sentConfirm": "We sent a confirmation email to:",
+    "checkEmail": "Check your email and click on the confirmation button to continue."
   }
 }

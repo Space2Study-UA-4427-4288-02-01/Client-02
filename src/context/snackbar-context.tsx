@@ -23,7 +23,7 @@ interface SetAllertProps {
   duration?: number
 }
 
-interface SnackBarContextOutput {
+export interface SnackBarContextOutput {
   setAlert: (options: SetAllertProps) => void
 }
 
