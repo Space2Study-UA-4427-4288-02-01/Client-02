@@ -44,7 +44,7 @@ export const EmailModal: FC<EmailModalProps> = ({ type }) => {
         ) : null}
         {isSuccess ? (
           <AppButton onClick={openLoginDialog} size={SizeEnum.Small}>
-            {t('header.loginButton')}
+            {t('modals.loginButton')}
           </AppButton>
         ) : null}
       </Box>
