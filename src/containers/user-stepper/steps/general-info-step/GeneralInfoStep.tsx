@@ -1,20 +1,65 @@
+import { FC, useEffect } from 'react'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
-import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import loginImg from '~/assets/img/login-dialog/login.svg'
 import AppSelect from '~/components/app-select/AppSelect'
 import AppTextArea from '~/components/app-text-area/AppTextArea'
 import AppTextField from '~/components/app-text-field/AppTextField'
-import { styles } from '~/containers/user-stepper/steps/general-info-step/GeneralInfoStep.styles'
+import styles from '~/containers/user-stepper/steps/general-info-step/GeneralInfoStep.styles'
+import { useStepContext } from '~/context/step-context'
+import { validations } from '~/containers/user-stepper/constants'
+import useLocations from '~/hooks/use-locations'
 
 interface GeneralInfoStepProps {
   btnsBox?: React.ReactNode
+  stepLabel?: string
 }
 
-const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox }) => {
+const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
+  const { stepData, handleStepData } = useStepContext()
+  const {
+    countryOptions,
+    cityOptions,
+    areCountriesLoaded,
+    getCountries,
+    getCities,
+    selectCountry
+  } = useLocations()
   const { t } = useTranslation()
+
+  useEffect(() => {
+    ;(async () => {
+      if (data.country) {
+        await getCountries()
+        selectCountry(data.country)
+        await getCities()
+      }
+    })()
+  }, [])
+
+  const { data, errors } = stepLabel
+    ? stepData[stepLabel]
+    : { data: {}, errors: {} }
+
+  const handleChange = (field: string, value: string): void => {
+    handleStepData(stepLabel, { [field]: value })
+    console.log(data)
+  }
+
+  const handleValidate = (field: string, value: string): void => {
+    const validator = validations[field as keyof typeof validations]
+    const error = validator?.(value) || ''
+
+    handleStepData(stepLabel, {}, { [field]: error })
+  }
+
+  const handleCountryChange = (value: string) => {
+    handleStepData(stepLabel, { ['country']: value })
+    handleStepData(stepLabel, { ['city']: '' })
+    selectCountry(value)
+  }
 
   return (
     <Box sx={styles.container}>
@@ -23,59 +68,66 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox }) => {
       </Box>
       <Box sx={styles.rigthBox}>
         <Box sx={styles.formContainer}>
-          <Typography>{t('step.generalInfo.title')}</Typography>
+          <Typography sx={{ mb: '10px' }}>
+            {t('step.generalInfo.title')}
+          </Typography>
           <Box sx={styles.formRow}>
             <AppTextField
-              autoFocus
               data-testid={'firstName'}
-              errorMsg={t('step.generalInfo.fnError')}
+              errorMsg={errors.firstName && t(errors.firstName)}
               fullWidth
-              label={t('step.generalInfo.firstName')}
-              onBlur={() => {}}
-              onChange={() => {}}
+              label={t('common.labels.firstName')}
+              onBlur={(e) => handleValidate('firstName', e.target.value)}
+              onChange={(e) => handleChange('firstName', e.target.value)}
               required
               size='medium'
-              sx={{ mb: '5px' }}
               type='text'
-              value={''}
+              value={data.firstName}
             />
 
             <AppTextField
               data-testid={'lastName'}
-              errorMsg={t('step.generalInfo.lnError')}
+              errorMsg={errors.lastName && t(errors.lastName)}
               fullWidth
-              label={t('step.generalInfo.lastName')}
-              onBlur={() => {}}
-              onChange={() => {}}
+              label={t('common.labels.lastName')}
+              onBlur={(e) => handleValidate('lastName', e.target.value)}
+              onChange={(e) => handleChange('lastName', e.target.value)}
               required
               size='medium'
-              sx={{ mb: '5px' }}
               type='text'
-              value={''}
+              value={data.lastName}
             />
           </Box>
           <Box sx={styles.formRow}>
             <AppSelect
-              fields={[]}
-              label={t('step.generalInfo.country')}
-              setValue={() => {}}
-              value={''}
+              fields={countryOptions}
+              label={t('common.labels.country')}
+              onOpen={getCountries}
+              setValue={(value) => handleCountryChange(value)}
+              value={data.country}
             />
             <AppSelect
-              fields={[]}
-              label={t('step.generalInfo.city')}
-              setValue={() => {}}
-              value={''}
+              disabled={!areCountriesLoaded}
+              fields={cityOptions}
+              label={t('common.labels.city')}
+              onOpen={getCities}
+              setValue={(value) => handleChange('city', value)}
+              value={data.city}
             />
           </Box>
           <AppTextArea
-            label={t('step.generalInfo.descriptionPlaceholder')}
-            maxLength={70}
-            onChange={() => {}}
+            label={t('step.generalInfo.description')}
+            maxLength={100}
+            onChange={(e) =>
+              handleChange('professionalSummary', e.target.value)
+            }
             style={{ width: '100%' }}
-            value={''}
+            sx={{ mt: '20px' }}
+            value={data.professionalSummary}
           />
-          <Typography>{t('step.generalInfo.helperText')}</Typography>
+          <Typography sx={styles.helperText}>
+            {t('step.generalInfo.helperText')}
+          </Typography>
         </Box>
         {btnsBox}
       </Box>

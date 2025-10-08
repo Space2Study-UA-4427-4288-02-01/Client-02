@@ -4,6 +4,12 @@ export interface ItemsWithCount<T> {
   count: number
   items: T[]
 }
+
+export interface LocationsWithTotal<T> {
+  total: number
+  data: T[]
+}
+
 export interface CommonEntityFields {
   _id: string
   createdAt: string
@@ -45,6 +51,17 @@ export interface SubjectInterface {
 
 export interface SubjectNameInterface {
   _id: string
+  name: string
+}
+
+export interface LocationCountryInterface {
+  id: number
+  name: string
+  countryCode: string
+}
+
+export interface LocationCityInterface {
+  id: number
   name: string
 }
 

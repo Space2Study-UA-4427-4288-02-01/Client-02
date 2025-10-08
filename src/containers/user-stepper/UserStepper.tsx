@@ -1,5 +1,5 @@
-import { FC, useEffect, useState } from 'react'
-import { useAppDispatch } from '~/hooks/use-redux'
+import { FC, useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '~/hooks/use-redux'
 import { markFirstLoginComplete } from '~/redux/reducer'
 import StepWrapper from '~/components/step-wrapper/StepWrapper'
 
@@ -12,6 +12,7 @@ import LanguageStep from '~/containers/user-stepper/steps/language-step/Language
 
 import {
   tutorStepLabels,
+  studentStepLabels,
   initialValues
 } from '~/containers/user-stepper/constants'
 import { student } from '~/constants'
@@ -21,29 +22,29 @@ interface StepperProps {
 }
 
 const UserStepper: FC<StepperProps> = ({ userRole }) => {
-  const [isUserFetched, setIsUserFetched] = useState(false)
+  const { firstName, lastName } = useAppSelector((state) => state.appMain)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     dispatch(markFirstLoginComplete())
   }, [dispatch])
 
-  const childrenArr = [
-    <GeneralInfoStep
-      isUserFetched={isUserFetched}
-      key='1'
-      setIsUserFetched={setIsUserFetched}
-    />,
+  const stepComponents = [
+    <GeneralInfoStep key='1' />,
     <SubjectsStep key='2' />,
     <LanguageStep key='3' />,
     <AddPhotoStep key='4' />
   ]
 
-  const stepLabels = userRole === student ? '' : tutorStepLabels
+  const stepperInitialValues =
+    firstName && lastName
+      ? { ...initialValues, firstName, lastName }
+      : initialValues
+  const stepLabels = userRole === student ? studentStepLabels : tutorStepLabels
 
   return (
-    <StepProvider initialValues={initialValues} stepLabels={stepLabels}>
-      <StepWrapper steps={stepLabels}>{childrenArr}</StepWrapper>
+    <StepProvider initialValues={stepperInitialValues} stepLabels={stepLabels}>
+      <StepWrapper steps={stepLabels}>{stepComponents}</StepWrapper>
     </StepProvider>
   )
 }
