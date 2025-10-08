@@ -18,6 +18,8 @@ interface UserState {
   isFirstLogin: boolean
   loading: boolean
   pageLoad: boolean
+  firstName: string
+  lastName: string
 }
 
 const initialState: UserState = {
@@ -27,7 +29,9 @@ const initialState: UserState = {
   loading: true,
   pageLoad: false,
   error: '',
-  isFirstLogin: true
+  isFirstLogin: true,
+  firstName: '',
+  lastName: ''
 }
 
 export const checkAuth = createAsyncThunk(
@@ -64,6 +68,8 @@ export const mainSlice = createSlice({
       const userData: AccessToken = parseJwt(action.payload)
       state.userId = userData.id
       state.userRole = userData.role
+      state.firstName = userData.firstName
+      state.lastName = userData.lastName
       state.isFirstLogin = userData.isFirstLogin
     },
     logout(state) {

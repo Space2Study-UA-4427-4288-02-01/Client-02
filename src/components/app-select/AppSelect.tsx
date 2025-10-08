@@ -32,10 +32,10 @@ const AppSelect = <T,>({
   const changeValue = (event: SelectChangeEvent<T>) =>
     setValue(event.target.value as T)
 
-  const fieldsList = fields.map(({ title, value }) => {
+  const fieldsList = fields.map(({ title, value, id = null }) => {
     if (typeof value === 'string' || typeof value === 'number') {
       return (
-        <MenuItem key={title} value={value}>
+        <MenuItem key={id ? id : title} value={value}>
           {t(title)}
         </MenuItem>
       )

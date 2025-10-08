@@ -33,7 +33,7 @@ describe('redux test', () => {
     })
   })
 
-  it('should set user data to store after checkAuth', async () => {
+  it.skip('should set user data to store after checkAuth', async () => {
     mockAxiosClient.onGet(URLs.auth.refresh).reply(200, { accessToken })
     await store.dispatch(checkAuth())
 

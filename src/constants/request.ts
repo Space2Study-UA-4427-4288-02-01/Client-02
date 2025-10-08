@@ -28,6 +28,11 @@ export const URLs = {
     get: '/subjects',
     getNames: '/subjects/names'
   },
+  locations: {
+    getCountries: '/location/countries',
+    getCities: (countryCode: string) =>
+      `/location/countries/${countryCode}/cities`
+  },
   resources: {
     questions: {
       get: '/questions',

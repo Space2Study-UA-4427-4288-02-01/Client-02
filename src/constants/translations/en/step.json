@@ -8,13 +8,7 @@
   },
   "generalInfo": {
     "title": "Please complete your profile details.",
-    "firstName": "First Name",
-    "fnError": "Please enter your first name",
-    "lastName": "Last Name",
-    "lnError": "Please enter your last name",
-    "country": "Country",
-    "city": "City",
-    "descriptionPlaceholder": "Describe in short your professional status",
+    "description": "Describe in short your professional status",
     "helperText": "Inputs with the * sign are required"
   }
 }

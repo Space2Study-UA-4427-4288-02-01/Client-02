@@ -1,11 +1,12 @@
 import { createContext, useCallback, useContext, useState } from 'react'
+import { getEmptyValues } from '~/utils/helper-functions'
 
 const StepContext = createContext()
 
 const StepProvider = ({ children, initialValues, stepLabels }) => {
   const [generalData, setGeneralData] = useState({
     data: initialValues,
-    errors: {}
+    errors: getEmptyValues(initialValues, '')
   })
   const [subject, setSubject] = useState([])
   const [language, setLanguage] = useState(null)
@@ -23,7 +24,10 @@ const StepProvider = ({ children, initialValues, stepLabels }) => {
     (stepLabel, data, errors) => {
       switch (stepLabel) {
         case generalLabel:
-          setGeneralData({ data, errors })
+          setGeneralData((prev) => ({
+            data: { ...prev.data, ...data },
+            errors: { ...prev.errors, ...errors }
+          }))
           break
         case subjectLabel:
           setSubject(data)
