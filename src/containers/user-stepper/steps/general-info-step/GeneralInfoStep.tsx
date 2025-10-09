@@ -11,53 +11,49 @@ import styles from '~/containers/user-stepper/steps/general-info-step/GeneralInf
 import { useStepContext } from '~/context/step-context'
 import { validations } from '~/containers/user-stepper/constants'
 import useLocations from '~/hooks/use-locations'
+import { useAppSelector } from '~/hooks/use-redux'
+import { GeneralData } from '~/context/types'
 
 interface GeneralInfoStepProps {
   btnsBox?: React.ReactNode
-  stepLabel?: string
+  stepLabel: string
 }
 
 const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
-  const { stepData, handleStepData } = useStepContext()
+  const { firstName, lastName } = useAppSelector((state) => state.appMain)
+
+  const { stepData, updateGeneral } = useStepContext()
   const {
     countryOptions,
     cityOptions,
     areCountriesLoaded,
-    getCountries,
-    getCities,
+    // getCountries,
+    // getCities,
     selectCountry
   } = useLocations()
   const { t } = useTranslation()
 
-  useEffect(() => {
-    ;(async () => {
-      if (data.country) {
-        await getCountries()
-        selectCountry(data.country)
-        await getCities()
-      }
-    })()
-  }, [])
+  const { data, errors } = stepData[stepLabel] as GeneralData
 
-  const { data, errors } = stepLabel
-    ? stepData[stepLabel]
-    : { data: {}, errors: {} }
+  useEffect(() => {
+    if (firstName && lastName) {
+      updateGeneral({ firstName: firstName, lastName: lastName })
+    }
+  }, [firstName, lastName, updateGeneral])
 
   const handleChange = (field: string, value: string): void => {
-    handleStepData(stepLabel, { [field]: value })
-    console.log(data)
+    updateGeneral({ [field]: value })
   }
 
   const handleValidate = (field: string, value: string): void => {
     const validator = validations[field as keyof typeof validations]
     const error = validator?.(value) || ''
-
-    handleStepData(stepLabel, {}, { [field]: error })
+    updateGeneral({}, { [field]: error })
   }
 
   const handleCountryChange = (value: string) => {
-    handleStepData(stepLabel, { ['country']: value })
-    handleStepData(stepLabel, { ['city']: '' })
+    updateGeneral({ country: value })
+    updateGeneral({ city: '' })
     selectCountry(value)
   }
 
@@ -102,7 +98,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
             <AppSelect
               fields={countryOptions}
               label={t('common.labels.country')}
-              onOpen={getCountries}
+              // onOpen={getCountries}
               setValue={(value) => handleCountryChange(value)}
               value={data.country}
             />
@@ -110,7 +106,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
               disabled={!areCountriesLoaded}
               fields={cityOptions}
               label={t('common.labels.city')}
-              onOpen={getCities}
+              // onOpen={getCities}
               setValue={(value) => handleChange('city', value)}
               value={data.city}
             />
