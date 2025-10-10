@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useMemo,
-  useCallback
-} from 'react'
+import { createContext, useContext, useState } from 'react'
 import { UserRoleEnum } from '~/types'
 import {
   generalValues,
@@ -38,64 +32,37 @@ const StepProvider = ({ children, userRole }: StepProviderProps) => {
     userRole === UserRoleEnum.Student ? stepLabels.student : stepLabels.tutor
   const [generalLabel, subjectLabel, languageLabel, photoLabel] = steps
 
-  const stepData: StepData = useMemo(
-    () => ({
-      [generalLabel]: generalData,
-      [subjectLabel]: subject,
-      [languageLabel]: language,
-      [photoLabel]: photo
-    }),
-    [
-      generalLabel,
-      generalData,
-      subjectLabel,
-      subject,
-      languageLabel,
-      language,
-      photoLabel,
-      photo
-    ]
-  )
+  const stepData: StepData = {
+    [generalLabel]: generalData,
+    [subjectLabel]: subject,
+    [languageLabel]: language,
+    [photoLabel]: photo
+  }
 
-  const updateGeneral = useCallback(
-    (
-      data: Partial<GeneralValuesInterface>,
-      errors?: Partial<GeneralValuesInterface>
-    ) => {
-      setGeneralData((prev) => ({
-        data: { ...prev.data, ...data },
-        errors: { ...prev.errors, ...errors }
-      }))
-    },
-    []
-  )
+  const updateGeneral = (
+    data: Partial<GeneralValuesInterface>,
+    errors?: Partial<GeneralValuesInterface>
+  ) => {
+    setGeneralData((prev) => ({
+      data: { ...prev.data, ...data },
+      errors: { ...prev.errors, ...errors }
+    }))
+  }
 
-  const updateSubject = useCallback(
-    (data: SubjectValuesInterface) => setSubject(data),
-    []
-  )
+  const updateSubject = (data: SubjectValuesInterface) => setSubject(data)
 
-  const updateLanguage = useCallback(
-    (data: LanguageValuesInterface) => setLanguage(data),
-    []
-  )
+  const updateLanguage = (data: LanguageValuesInterface) => setLanguage(data)
 
-  const updatePhoto = useCallback(
-    (data: PhotoValuesInterface) => setPhoto(data),
-    []
-  )
+  const updatePhoto = (data: PhotoValuesInterface) => setPhoto(data)
 
-  const contextValue = useMemo(
-    () => ({
-      stepData,
-      steps,
-      updateGeneral,
-      updateSubject,
-      updateLanguage,
-      updatePhoto
-    }),
-    [stepData, steps, updateGeneral, updateSubject, updateLanguage, updatePhoto]
-  )
+  const contextValue = {
+    stepData,
+    steps,
+    updateGeneral,
+    updateSubject,
+    updateLanguage,
+    updatePhoto
+  }
 
   return (
     <StepContext.Provider value={contextValue}>{children}</StepContext.Provider>

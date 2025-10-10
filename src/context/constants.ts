@@ -12,7 +12,7 @@ export const generalValues: GeneralValuesInterface = {
   country: '',
   city: '',
   professionalSummary: ''
-}
+} as const
 
 export const subjectValues: SubjectValuesInterface = {
   category: '',

@@ -7,10 +7,10 @@ import GeneralInfoStep from '~/containers/user-stepper/steps/general-info-step/G
 import AddPhotoStep from '~/containers/user-stepper/steps/add-photo-step/AddPhotoStep'
 import SubjectsStep from '~/containers/user-stepper/steps/subjects-step/SubjectsStep'
 import LanguageStep from '~/containers/user-stepper/steps/language-step/LanguageStep'
-import { UserRoleEnum } from '~/types'
+import { UserRole } from '~/types'
 
 interface StepperProps {
-  userRole: UserRoleEnum
+  userRole: '' | UserRole
 }
 
 const UserStepper: FC<StepperProps> = ({ userRole }) => {

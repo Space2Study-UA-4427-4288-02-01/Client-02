@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { UserRoleEnum } from '~/types'
+import { UserRole } from '~/types'
 import {
   GeneralValuesInterface,
   SubjectValuesInterface,
@@ -9,7 +9,7 @@ import {
 
 export interface StepProviderProps {
   children: ReactNode
-  userRole: UserRoleEnum
+  userRole: '' | UserRole
 }
 
 export interface GeneralData {

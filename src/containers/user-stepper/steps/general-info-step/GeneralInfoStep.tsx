@@ -37,7 +37,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
 
   useEffect(() => {
     if (firstName && lastName) {
-      updateGeneral({ firstName: firstName, lastName: lastName })
+      updateGeneral({ firstName, lastName })
     }
   }, [firstName, lastName, updateGeneral])
 
