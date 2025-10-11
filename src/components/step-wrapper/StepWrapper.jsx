@@ -9,9 +9,11 @@ import WestIcon from '@mui/icons-material/West'
 
 import AppButton from '~/components/app-button/AppButton'
 import useSteps from '~/hooks/use-steps'
+import { useStepContext } from '~/context/step-context'
 import { styles } from '~/components/step-wrapper/StepWrapper.styles'
 
-const StepWrapper = ({ children, steps }) => {
+const StepWrapper = ({ children }) => {
+  const { steps } = useStepContext()
   const { activeStep, stepErrors, isLastStep, loading, stepOperation } =
     useSteps({
       steps
