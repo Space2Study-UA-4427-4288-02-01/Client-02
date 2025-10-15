@@ -7,7 +7,7 @@ import { useModalContext } from '~/context/modal-context'
 import { useStepContext } from '~/context/step-context'
 import { useSnackBarContext } from '~/context/snackbar-context'
 import { userService } from '~/services/user-service'
-import { snackbarVariants } from '~/constants'
+import { defaultResponses, snackbarVariants } from '~/constants'
 
 const useSteps = ({ steps }) => {
   const [activeStep, setActiveStep] = useState(0)
@@ -15,6 +15,7 @@ const useSteps = ({ steps }) => {
   const { stepData } = useStepContext()
   const { setAlert } = useSnackBarContext()
   const { userId } = useAppSelector((state) => state.appMain)
+  const { photo } = stepData.photo
 
   const updateUser = useCallback(
     (data) => userService.updateUser(userId, data),
@@ -44,6 +45,12 @@ const useSteps = ({ steps }) => {
     onResponseError: handleResponseError
   })
 
+  const { fetchData: uploadPhoto } = useAxios({
+    service: () => userService.uploadPhoto(userId, photo),
+    fetchOnMount: false,
+    defaultResponse: defaultResponses.object
+  })
+
   const stepErrors = Object.values(stepData).map(
     (data) =>
       data && data.errors && Object.values(data.errors).find((error) => error)
@@ -62,11 +69,15 @@ const useSteps = ({ steps }) => {
   const handleSubmit = () => {
     const hasErrors = stepErrors.find((error) => error)
 
+    uploadPhoto(userId, photo)
+
     const { firstName, lastName, country, city, professionalSummary } =
       stepData.generalInfo.data
 
+    const { language } = stepData.language
+    const { subjects } = stepData.subjects
+
     const data = {
-      photo: stepData.photo[0] ? stepData.photo[0] : '',
       firstName,
       lastName,
       address: {
@@ -74,8 +85,9 @@ const useSteps = ({ steps }) => {
         city: city ?? ''
       },
       professionalSummary: professionalSummary,
-      mainSubjects: stepData.subjects,
-      nativeLanguage: stepData.language ?? ''
+      mainSubjects: subjects,
+      nativeLanguage: language ?? '',
+      isFirstLogin: false
     }
 
     !hasErrors && fetchData(data)
