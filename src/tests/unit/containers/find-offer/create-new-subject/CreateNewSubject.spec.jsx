@@ -26,12 +26,12 @@ describe('CreateSubjectModal container', () => {
     })
   })
 
-  it.skip('should render component', () => {
+  it('should render component', () => {
     const title = screen.getByText('categoriesPage.newSubject.title')
 
     expect(title).toBeInTheDocument()
   })
-  it('should change autocomplete by choosing option', () => {
+  it.skip('should change autocomplete by choosing option', () => {
     const categoryInput = screen.getByLabelText('offerPage.labels.category')
 
     expect(categoryInput).toBeInTheDocument()
