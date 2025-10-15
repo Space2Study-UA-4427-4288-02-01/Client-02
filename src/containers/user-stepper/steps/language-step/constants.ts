@@ -1,11 +1,3 @@
-export const categoriesMock = [
-  { name: 'Languages' },
-  { name: 'Mathematics' },
-  { name: 'Computer science' },
-  { name: 'Music' },
-  { name: 'History' }
-]
-
 export const languagesMock = [
   { name: 'Chinese' },
   { name: 'Czech' },
