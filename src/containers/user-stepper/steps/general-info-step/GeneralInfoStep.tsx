@@ -4,13 +4,13 @@ import Box from '@mui/material/Box'
 import { useTranslation } from 'react-i18next'
 
 import loginImg from '~/assets/img/login-dialog/login.svg'
-import AppSelect from '~/components/app-select/AppSelect'
+// import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
 import AppTextArea from '~/components/app-text-area/AppTextArea'
 import AppTextField from '~/components/app-text-field/AppTextField'
 import styles from '~/containers/user-stepper/steps/general-info-step/GeneralInfoStep.styles'
 import { useStepContext } from '~/context/step-context'
 import { validations } from '~/containers/user-stepper/constants'
-import useLocations from '~/hooks/use-locations'
+// import useLocations from '~/hooks/use-locations'
 import { useAppSelector } from '~/hooks/use-redux'
 import { GeneralData } from '~/context/types'
 
@@ -23,23 +23,27 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   const { firstName, lastName } = useAppSelector((state) => state.appMain)
 
   const { stepData, updateGeneral } = useStepContext()
-  const {
-    countryOptions,
-    cityOptions,
-    areCountriesLoaded,
-    // getCountries,
-    // getCities,
-    selectCountry
-  } = useLocations()
+  const { data, errors } = stepData[stepLabel] as GeneralData
+
+  // const {
+  //   countries,
+  //   cities,
+  //   loading,
+  //   selectedCountryCode,
+  //   setSelectedCountryCode
+  // } = useLocations()
   const { t } = useTranslation()
 
-  const { data, errors } = stepData[stepLabel] as GeneralData
+  // const filterOptions = createFilterOptions({
+  //   matchFrom: 'start'
+  // })
 
   useEffect(() => {
     if (firstName && lastName) {
+      if (data.firstName || data.lastName) return
       updateGeneral({ firstName, lastName })
     }
-  }, [firstName, lastName, updateGeneral])
+  }, [])
 
   const handleChange = (field: string, value: string): void => {
     updateGeneral({ [field]: value })
@@ -51,11 +55,20 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
     updateGeneral({}, { [field]: error })
   }
 
-  const handleCountryChange = (value: string) => {
-    updateGeneral({ country: value })
-    updateGeneral({ city: '' })
-    selectCountry(value)
-  }
+  // const handleCountryChange = (
+  //   _: any,
+  //   value: { name: any; countryCode: SetStateAction<string | null> }
+  // ) => {
+  //   console.log(value)
+  //   updateGeneral(value ? { country: value.name } : { country: '' })
+  //   setSelectedCountryCode(value.countryCode)
+  //   updateGeneral({ city: '' })
+  // }
+
+  // const handleCityChange = (_: any, value: { name: any }) => {
+  //   console.log(value)
+  //   updateGeneral(value ? { city: value.name } : { city: '' })
+  // }
 
   return (
     <Box sx={styles.container}>
@@ -95,21 +108,29 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
             />
           </Box>
           <Box sx={styles.formRow}>
-            <AppSelect
-              fields={countryOptions}
+            {/* <AppAutoComplete
+              fullWidth
+              filterOptions={filterOptions}
+              getOptionLabel={(option) => option.name}
               label={t('common.labels.country')}
-              // onOpen={getCountries}
-              setValue={(value) => handleCountryChange(value)}
-              value={data.country}
+              loading={loading}
+              onOpen={countries.fetch}
+              onChange={handleCountryChange}
+              options={countries.data}
+              value={data.country || null}
             />
-            <AppSelect
-              disabled={!areCountriesLoaded}
-              fields={cityOptions}
-              label={t('common.labels.city')}
-              // onOpen={getCities}
-              setValue={(value) => handleChange('city', value)}
-              value={data.city}
-            />
+            <AppAutoComplete
+              disabled={!selectedCountryCode}
+              fullWidth
+              filterOptions={filterOptions}
+              getOptionLabel={(option) => option.name}
+              label={t('common.labels.country')}
+              loading={loading}
+              onOpen={cities.fetch}
+              onChange={handleCityChange}
+              options={cities.data}
+              value={data.city || null}
+            /> */}
           </Box>
           <AppTextArea
             label={t('step.generalInfo.description')}
