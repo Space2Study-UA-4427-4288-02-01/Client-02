@@ -24,7 +24,7 @@ export const languageValues: LanguageValuesInterface = {
 }
 
 export const photoValues: PhotoValuesInterface = {
-  photo: ''
+  photo: null
 }
 
 export const stepLabels: StepLablesInterface = {

@@ -16,7 +16,7 @@ export interface LanguageValuesInterface {
 }
 
 export interface PhotoValuesInterface {
-  photo: string
+  photo: File | null
 }
 
 export interface StepLablesInterface {

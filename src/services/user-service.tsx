@@ -34,5 +34,18 @@ export const userService = {
   },
   deleteUsers: (userIds: string): Promise<AxiosResponse<null>> => {
     return axiosClient.post(URLs.users.delete, userIds)
+  },
+  uploadPhoto: (
+    userId: string,
+    file: File
+  ): Promise<AxiosResponse<{ [key: string]: string }>> => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    return axiosClient.post(URLs.users.uploadPhoto(userId), formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   }
 }

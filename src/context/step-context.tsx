@@ -49,7 +49,12 @@ const StepProvider = ({ children, userRole }: StepProviderProps) => {
     }))
   }
 
-  const updateSubject = (data: SubjectValuesInterface) => setSubject(data)
+  const updateSubject = (data: Partial<SubjectValuesInterface>) => {
+    setSubject((prev) => ({
+      ...prev,
+      ...data
+    }))
+  }
 
   const updateLanguage = (data: LanguageValuesInterface) => setLanguage(data)
 

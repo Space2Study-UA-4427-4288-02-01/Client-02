@@ -1,18 +1,155 @@
-import { FC } from 'react'
+import { FC, SyntheticEvent, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
-
+import studyImg from '~/assets/img/tutor-home-page/become-tutor/study-category.svg'
 import { styles } from '~/containers/user-stepper/steps/subjects-step/SubjectsStep.styles'
+import { Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
+import AppButton from '~/components/app-button/AppButton'
+import AppAutoComplete, {
+  OptionType
+} from '~/components/app-auto-complete/AppAutoComplete'
+import useCategories from '~/hooks/use-categories'
+import useSubjects from '~/hooks/use-subject'
+import { useStepContext } from '~/context/step-context'
+import { SubjectValuesInterface } from '~/context/types'
+import AppChipList from '~/components/app-chips-list/AppChipList'
 
 interface SubjectsStepProps {
   btnsBox?: React.ReactNode
-  stepLabel?: string
+  stepLabel: string
 }
 
-const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox }) => {
+const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
+  const { stepData, updateSubject } = useStepContext()
+  const { subjects } = stepData[stepLabel] as SubjectValuesInterface
+  console.log('StepData:', stepData)
+  const { t } = useTranslation()
+
+  const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
+    null
+  )
+  const [selectedSubjects, setSelectedSubjects] = useState<OptionType | null>(
+    null
+  )
+  const fetchCategoryRef = useRef(false)
+  const fetchSubjectRef = useRef(false)
+
+  const {
+    loading: categoriesLoading,
+    response: categoryResponse = [],
+    fetchData: fetchCategories
+  } = useCategories()
+
+  const {
+    loading: subjectsLoading,
+    response: subjectsResponse = [],
+    fetchData: fetchSubjects
+  } = useSubjects({ category: selectedCategory })
+
+  const focusFetchCategories = () => {
+    if (fetchCategoryRef.current) return
+    fetchCategoryRef.current = true
+    void fetchCategories()
+  }
+
+  const focusFetchSubjects = () => {
+    if (fetchSubjectRef.current) return
+    fetchSubjectRef.current = true
+    void fetchSubjects()
+  }
+
+  const handleCategoryChange = (
+    _e: SyntheticEvent<Element, Event>,
+    newValue: OptionType | null
+  ) => {
+    setSelectedCategory(newValue)
+    setSelectedSubjects(null)
+    updateSubject({
+      category: newValue?.value || '',
+      subjects: [...subjects]
+    })
+  }
+
+  const handleSubjectChange = (
+    _e: SyntheticEvent<Element, Event>,
+    newValue: OptionType | null
+  ) => {
+    setSelectedSubjects(newValue)
+  }
+
+  const handleAddSubject = () => {
+    if (!selectedSubjects) return
+    if (subjects.includes(selectedSubjects.title)) return
+    updateSubject({
+      category: selectedCategory ? selectedCategory.value : '',
+      subjects: [...subjects, selectedSubjects.title]
+    })
+    setSelectedSubjects(null)
+  }
+
+  const handleDelete = (subject: string) => {
+    const newSubjects = subjects.filter((sub) => sub !== subject)
+    updateSubject({
+      category: selectedCategory ? selectedCategory.value : '',
+      subjects: [...newSubjects]
+    })
+  }
+
+  const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
+    value: category._id,
+    title: category.name
+  }))
+
+  const subjectsOptions: OptionType[] = subjectsResponse.map((subject) => ({
+    value: subject._id,
+    title: subject.name
+  }))
+
   return (
     <Box sx={styles.container}>
-      Subject step
-      {btnsBox}
+      <Box sx={styles.imgContainer}>
+        <Box component='img' src={studyImg} sx={styles.img} />
+      </Box>
+      <Box sx={styles.rightBox}>
+        <Box sx={styles.formContainer}>
+          <Typography component='span' sx={styles.title}>
+            {t('step.interestsInfo.title')}
+          </Typography>
+          <Box sx={styles.formRow}>
+            <AppAutoComplete
+              disabled={categoriesLoading}
+              label={t('step.interestsInfo.studyCategory')}
+              onChange={handleCategoryChange}
+              onOpen={focusFetchCategories}
+              options={categoryOptions}
+              value={selectedCategory}
+            />
+            <AppAutoComplete
+              disabled={subjectsLoading || !selectedCategory}
+              label={t('step.interestsInfo.subject')}
+              loading={subjectsLoading}
+              onChange={handleSubjectChange}
+              onOpen={focusFetchSubjects}
+              options={subjectsOptions}
+              value={selectedSubjects}
+            />
+            <AppButton
+              disabled={!selectedSubjects}
+              fullWidth
+              onClick={handleAddSubject}
+              variant='tonal'
+            >
+              {t('step.interestsInfo.addSubjectBtn')}
+            </AppButton>
+            <AppChipList
+              defaultQuantity={5}
+              handleChipDelete={handleDelete}
+              items={subjects}
+            />
+          </Box>
+        </Box>
+        {btnsBox}
+      </Box>
     </Box>
   )
 }
