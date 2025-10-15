@@ -1,12 +1,23 @@
 import { fadeAnimation } from '~/styles/app-theme/custom-animations'
 
-export const style = {
+export const styles = {
   root: {
     display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
     justifyContent: 'space-between',
     gap: '40px',
     height: { sm: '485px' },
     paddingBottom: { sm: '210px', md: '0px' },
+    ...fadeAnimation
+  },
+  container: {
+    display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
+    alignItems: { sm: 'center', md: 'stretch' },
+    justifyContent: 'space-between',
+    gap: '40px',
+    height: { sm: '485px' },
+    paddingBottom: { xs: '30px', sm: '0' },
     ...fadeAnimation
   },
   img: {
@@ -28,6 +39,7 @@ export const style = {
     justifyContent: 'center',
     maxWidth: '440px',
     width: '100%',
+    height: '100px',
     aspectRatio: '1',
     border: '2px dashed',
     borderColor: 'primary.200',
@@ -43,9 +55,15 @@ export const style = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     maxWidth: '432px',
+    width: '100%',
     m: { md: 0, xs: '0 auto' },
     pt: 0,
     pb: { xs: '30px', sm: '0' }
+  },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px'
   },
   description: {
     mb: '20px'

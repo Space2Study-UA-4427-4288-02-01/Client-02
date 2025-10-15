@@ -98,7 +98,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
             <AppSelect
               fields={countryOptions}
               label={t('common.labels.country')}
-              // onOpen={getCountries}
+              //onOpen={getCountries}
               setValue={(value) => handleCountryChange(value)}
               value={data.country}
             />
@@ -106,7 +106,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
               disabled={!areCountriesLoaded}
               fields={cityOptions}
               label={t('common.labels.city')}
-              // onOpen={getCities}
+              //onOpen={getCities}
               setValue={(value) => handleChange('city', value)}
               value={data.city}
             />
