@@ -6,7 +6,7 @@ export interface ItemsWithCount<T> {
 }
 
 export interface LocationsWithTotal<T> {
-  total: number
+  total?: number
   data: T[]
 }
 

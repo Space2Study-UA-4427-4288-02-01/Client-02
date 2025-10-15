@@ -6,13 +6,13 @@ import {
   CategoryInterface,
   CategoryNameInterface,
   CategoriesParams,
-  ItemsWithCount
+  LocationsWithTotal
 } from '~/types'
 
 export const categoryService = {
   getCategories: (
     params?: Partial<CategoriesParams>
-  ): Promise<AxiosResponse<ItemsWithCount<CategoryInterface>>> => {
+  ): Promise<AxiosResponse<LocationsWithTotal<CategoryInterface>>> => {
     return axiosClient.get(URLs.categories.get, { params })
   },
   getCategoriesNames: (): Promise<AxiosResponse<CategoryNameInterface[]>> => {

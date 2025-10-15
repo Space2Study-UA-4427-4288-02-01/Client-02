@@ -10,5 +10,11 @@
     "title": "Please complete your profile details.",
     "description": "Describe in short your professional status",
     "helperText": "Inputs with the * sign are required"
+  },
+  "interestsInfo": {
+    "title": "Other categories you can add in your account settings later.",
+    "studyCategory": "Study Category",
+    "subject": "Subject",
+    "addSubjectBtn": "Add one more subject"
   }
 }
