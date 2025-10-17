@@ -140,7 +140,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
             />
             <AppButton
               disabled={
-                !selectedSubjects || subjectIsAdded(selectedSubjects.title)
+                !selectedSubjects || subjectIsAdded(selectedSubjects.value)
               }
               fullWidth
               onClick={handleAddSubject}
