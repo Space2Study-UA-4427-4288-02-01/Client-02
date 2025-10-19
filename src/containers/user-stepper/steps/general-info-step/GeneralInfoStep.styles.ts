@@ -21,7 +21,7 @@ const styles = {
     width: { xs: '50%', sm: '100%' },
     m: { sm: 0, xs: '0 auto' }
   },
-  rigthBox: {
+  rightBox: {
     maxWidth: { sm: '432px', xs: '100%' },
     display: 'flex',
     flex: 1,

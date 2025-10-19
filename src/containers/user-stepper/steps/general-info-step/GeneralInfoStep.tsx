@@ -1,18 +1,24 @@
-import { FC, useEffect } from 'react'
+import { FC, SyntheticEvent, useEffect, useState } from 'react'
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import { useTranslation } from 'react-i18next'
 
 import loginImg from '~/assets/img/login-dialog/login.svg'
-// import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
+import AppAutoComplete, {
+  OptionType
+} from '~/components/app-auto-complete/AppAutoComplete'
 import AppTextArea from '~/components/app-text-area/AppTextArea'
 import AppTextField from '~/components/app-text-field/AppTextField'
 import styles from '~/containers/user-stepper/steps/general-info-step/GeneralInfoStep.styles'
 import { useStepContext } from '~/context/step-context'
 import { validations } from '~/containers/user-stepper/constants'
-// import useLocations from '~/hooks/use-locations'
+import useLocations from '~/hooks/use-locations'
 import { useAppSelector } from '~/hooks/use-redux'
 import { GeneralData } from '~/context/types'
+import {
+  cityOptionsHelper,
+  countryOptionsHelper
+} from '~/containers/user-stepper/steps/general-info-step/utils'
 
 interface GeneralInfoStepProps {
   btnsBox?: React.ReactNode
@@ -25,25 +31,43 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   const { stepData, updateGeneral } = useStepContext()
   const { data, errors } = stepData[stepLabel] as GeneralData
 
-  // const {
-  //   countries,
-  //   cities,
-  //   loading,
-  //   selectedCountryCode,
-  //   setSelectedCountryCode
-  // } = useLocations()
+  const {
+    countries,
+    cities,
+    citiesCache,
+    loading,
+    selectedCountryCode,
+    setSelectedCountryCode
+  } = useLocations()
+
+  const [countryOptions, setCountryOptions] = useState<OptionType[]>([])
+  const [cityOptions, setCityOptions] = useState<OptionType[]>([])
+  const [selectedCountry, setSelectedCountry] = useState<OptionType | null>(
+    null
+  )
+  const [selectedCity, setSelectedCity] = useState<OptionType | null>(null)
   const { t } = useTranslation()
 
-  // const filterOptions = createFilterOptions({
-  //   matchFrom: 'start'
-  // })
-
   useEffect(() => {
+    if (data.firstName && data.lastName) return
     if (firstName && lastName) {
-      if (data.firstName || data.lastName) return
       updateGeneral({ firstName, lastName })
     }
-  }, [])
+  }, [data.firstName, data.lastName, firstName, lastName, updateGeneral])
+
+  useEffect(() => {
+    if (!countries.data) return
+    const options = countryOptionsHelper(countries.data)
+    setCountryOptions(options)
+  }, [countries.data])
+
+  useEffect(() => {
+    const cachedCities = selectedCountryCode
+      ? citiesCache[selectedCountryCode]
+      : null
+    if (!cachedCities) return
+    setCityOptions(cityOptionsHelper(cachedCities))
+  }, [citiesCache, selectedCountryCode])
 
   const handleChange = (field: string, value: string): void => {
     updateGeneral({ [field]: value })
@@ -55,27 +79,51 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
     updateGeneral({}, { [field]: error })
   }
 
-  // const handleCountryChange = (
-  //   _: any,
-  //   value: { name: any; countryCode: SetStateAction<string | null> }
-  // ) => {
-  //   console.log(value)
-  //   updateGeneral(value ? { country: value.name } : { country: '' })
-  //   setSelectedCountryCode(value.countryCode)
-  //   updateGeneral({ city: '' })
-  // }
+  const handleCountryFetch = () => {
+    if (countries.data.length > 0) return
+    void countries.fetch()
+  }
 
-  // const handleCityChange = (_: any, value: { name: any }) => {
-  //   console.log(value)
-  //   updateGeneral(value ? { city: value.name } : { city: '' })
-  // }
+  const handleCountryChange = (
+    _e: SyntheticEvent<Element, Event>,
+    option: OptionType | null
+  ) => {
+    console.log(option)
+    setSelectedCountry(option)
+    updateGeneral(option ? { country: option.title } : { country: '' })
+    setSelectedCountryCode(option ? option.value : null)
+    updateGeneral({ city: '' })
+    setSelectedCity(null)
+  }
+
+  const handleCityFetch = () => {
+    if (!selectedCountryCode) return
+    if (citiesCache[selectedCountryCode]) return
+    void cities.fetch(selectedCountryCode)
+  }
+
+  const handleCityChange = (
+    _e: SyntheticEvent<Element, Event>,
+    option: OptionType | null
+  ) => {
+    console.log(option)
+    setSelectedCity(option)
+    updateGeneral(option ? { city: option.title } : { city: '' })
+  }
+
+  const logData = () => {
+    // console.log(data)
+    // console.log(selectedCountryCode)
+    console.log(citiesCache)
+  }
 
   return (
     <Box sx={styles.container}>
       <Box sx={styles.imgContainer}>
         <Box component='img' src={loginImg} sx={styles.img} />
       </Box>
-      <Box sx={styles.rigthBox}>
+      <Box sx={styles.rightBox}>
+        <button onClick={logData}>Button</button>
         <Box sx={styles.formContainer}>
           <Typography sx={{ mb: '10px' }}>
             {t('step.generalInfo.title')}
@@ -108,29 +156,25 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
             />
           </Box>
           <Box sx={styles.formRow}>
-            {/* <AppAutoComplete
+            <AppAutoComplete
               fullWidth
-              filterOptions={filterOptions}
-              getOptionLabel={(option) => option.name}
               label={t('common.labels.country')}
               loading={loading}
-              onOpen={countries.fetch}
               onChange={handleCountryChange}
-              options={countries.data}
-              value={data.country || null}
+              onOpen={handleCountryFetch}
+              options={countryOptions}
+              value={selectedCountry}
             />
             <AppAutoComplete
               disabled={!selectedCountryCode}
               fullWidth
-              filterOptions={filterOptions}
-              getOptionLabel={(option) => option.name}
-              label={t('common.labels.country')}
+              label={t('common.labels.city')}
               loading={loading}
-              onOpen={cities.fetch}
               onChange={handleCityChange}
-              options={cities.data}
-              value={data.city || null}
-            /> */}
+              onOpen={handleCityFetch}
+              options={cityOptions}
+              value={selectedCity}
+            />
           </Box>
           <AppTextArea
             label={t('step.generalInfo.description')}

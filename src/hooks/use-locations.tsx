@@ -2,14 +2,19 @@ import { useCallback, useEffect, useState } from 'react'
 import { locationService } from '~/services/location-service'
 import useAxios from './use-axios'
 import { defaultResponses } from '~/constants'
+import { LocationCityInterface } from '~/types'
 
 const useLocations = ({
   fetchCountriesOnMount = false,
-  fetchCitiesOnMount = false
+  fetchCitiesOnMount = false,
+  countryCode = null
 } = {}) => {
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
-    null
+    countryCode
   )
+  const [citiesCache, setCitiesCache] = useState<
+    Record<string, LocationCityInterface[]>
+  >({})
 
   const getCountries = useCallback(() => locationService.getCountries(), [])
   const {
@@ -40,11 +45,26 @@ const useLocations = ({
     defaultResponse: defaultResponses.array
   })
 
+  const isCitiesCached = useCallback(
+    (countryCode: string, newCities: LocationCityInterface[]) => {
+      const cached = citiesCache[countryCode]
+      console.log(cached)
+
+      if (!cached) return false
+      return cached.every((city) => newCities.some((c) => c.id === city.id))
+    },
+    [citiesCache]
+  )
+
   useEffect(() => {
-    if (selectedCountryCode) {
-      void fetchCities()
-    }
-  }, [selectedCountryCode, fetchCities])
+    if (!selectedCountryCode) return
+    if (!Array.isArray(cities) || cities.length === 0) return
+    if (isCitiesCached(selectedCountryCode, cities)) return
+    setCitiesCache((prev) => ({
+      ...prev,
+      [selectedCountryCode]: cities
+    }))
+  }, [cities, selectedCountryCode, isCitiesCached])
 
   return {
     countries: {
@@ -59,6 +79,7 @@ const useLocations = ({
       error: citiesError,
       fetch: fetchCities
     },
+    citiesCache,
     selectedCountryCode,
     setSelectedCountryCode,
     loading: loadingCountries || loadingCities
