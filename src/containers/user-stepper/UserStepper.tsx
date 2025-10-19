@@ -16,7 +16,7 @@ interface StepperProps {
 const UserStepper: FC<StepperProps> = ({ userRole }) => {
   const stepComponents = [
     <GeneralInfoStep key='1' stepLabel='' />,
-    <SubjectsStep key='2' />,
+    <SubjectsStep key='2' stepLabel='interests' />,
     <LanguageStep key='3' />,
     <AddPhotoStep key='4' stepLabel='photo' />
   ]
