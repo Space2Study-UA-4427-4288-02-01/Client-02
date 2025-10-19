@@ -1,4 +1,4 @@
-import { FC, SyntheticEvent, useRef, useState } from 'react'
+import { FC, SyntheticEvent, useRef, useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import studyImg from '~/assets/img/tutor-home-page/become-tutor/study-category.svg'
 import { styles } from '~/containers/user-stepper/steps/subjects-step/SubjectsStep.styles'
@@ -32,7 +32,6 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     null
   )
   const fetchCategoryRef = useRef(false)
-  const fetchSubjectRef = useRef(false)
 
   const {
     loading: categoriesLoading,
@@ -52,12 +51,6 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     void fetchCategories()
   }
 
-  const focusFetchSubjects = () => {
-    if (fetchSubjectRef.current) return
-    fetchSubjectRef.current = true
-    void fetchSubjects()
-  }
-
   const handleCategoryChange = (
     _e: SyntheticEvent<Element, Event>,
     newValue: OptionType | null
@@ -70,6 +63,12 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     })
   }
 
+  useEffect(() => {
+    if (selectedCategory) {
+      void fetchSubjects()
+    }
+  }, [selectedCategory, fetchSubjects])
+
   const handleSubjectChange = (
     _e: SyntheticEvent<Element, Event>,
     newValue: OptionType | null
@@ -79,10 +78,9 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
 
   const handleAddSubject = () => {
     if (!selectedSubjects) return
-    if (subjects.includes(selectedSubjects.title)) return
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
-      subjects: [...subjects, selectedSubjects.title]
+      subjects: [...subjects, selectedSubjects.value]
     })
     setSelectedSubjects(null)
   }
@@ -94,6 +92,14 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
       subjects: [...newSubjects]
     })
   }
+
+  const subjectIsAdded = (subject: string): boolean => {
+    return subjects.includes(subject)
+  }
+
+  const subjectTitlesForChips = subjects
+    .map((id) => subjectsResponse.find((s) => s._id === id)?.name)
+    .filter(Boolean) as string[]
 
   const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
     value: category._id,
@@ -129,12 +135,13 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
               label={t('step.interestsInfo.subject')}
               loading={subjectsLoading}
               onChange={handleSubjectChange}
-              onOpen={focusFetchSubjects}
               options={subjectsOptions}
               value={selectedSubjects}
             />
             <AppButton
-              disabled={!selectedSubjects}
+              disabled={
+                !selectedSubjects || subjectIsAdded(selectedSubjects.value)
+              }
               fullWidth
               onClick={handleAddSubject}
               variant='tonal'
@@ -144,7 +151,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
             <AppChipList
               defaultQuantity={5}
               handleChipDelete={handleDelete}
-              items={subjects}
+              items={subjectTitlesForChips}
             />
           </Box>
         </Box>

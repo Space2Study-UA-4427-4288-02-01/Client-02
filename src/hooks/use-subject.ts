@@ -26,7 +26,7 @@ const useSubjects = <T = SubjectInterface>({
 }: UseSubjectsProps<T>): UseSubjectsResult<T> => {
   const getSubjects = useCallback(async () => {
     const res = await subjectService.getSubjects(
-      category ? { name: category?.value } : undefined
+      category ? { categoryId: category?.value } : undefined
     )
     return {
       ...res,
