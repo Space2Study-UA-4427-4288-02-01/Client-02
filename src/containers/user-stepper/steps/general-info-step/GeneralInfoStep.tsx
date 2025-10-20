@@ -63,12 +63,36 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   }, [countries.data])
 
   useEffect(() => {
-    const cachedCities = selectedCountryCode
-      ? citiesCache[selectedCountryCode]
-      : null
-    if (!cachedCities) return
+    if (!selectedCountryCode) {
+      setCityOptions([])
+      return
+    }
+    const cachedCities = citiesCache[selectedCountryCode]
+    if (!cachedCities) {
+      setCityOptions([])
+      return
+    }
     setCityOptions(cityOptionsHelper(cachedCities))
   }, [citiesCache, selectedCountryCode])
+
+  useEffect(() => {
+    if (data.country || data.city) return
+    const countryString = sessionStorage.getItem('userCountry')
+    const cityString = sessionStorage.getItem('userCity')
+    const country = countryString
+      ? (JSON.parse(countryString) as OptionType | null)
+      : null
+    const city = cityString
+      ? (JSON.parse(cityString) as OptionType | null)
+      : null
+    if (!country) return
+    setSelectedCountry(country)
+    setSelectedCountryCode(country.value)
+    updateGeneral({ country: country.title })
+    if (!city) return
+    setSelectedCity(city)
+    updateGeneral({ city: city.title })
+  }, [data.country, data.city, setSelectedCountryCode, updateGeneral])
 
   const handleChange = (field: string, value: string): void => {
     updateGeneral({ [field]: value })
@@ -81,7 +105,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   }
 
   const handleCountryFetch = () => {
-    if (countries.data.length > 0) return
+    if (countries.data?.length > 0) return
     void countries.fetch()
   }
 
@@ -116,24 +140,12 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   ) => {
     setSelectedCity(option)
     updateGeneral(option ? { city: option.title } : { city: '' })
-    sessionStorage.setItem('userCity', JSON.stringify(option))
+    if (option) {
+      sessionStorage.setItem('userCity', JSON.stringify(option))
+    } else {
+      sessionStorage.removeItem('userCity')
+    }
   }
-
-  useEffect(() => {
-    const countryString = sessionStorage.getItem('userCountry')
-    const cityString = sessionStorage.getItem('userCity')
-    const country = countryString
-      ? (JSON.parse(countryString) as OptionType | null)
-      : null
-    const city = cityString
-      ? (JSON.parse(cityString) as OptionType | null)
-      : null
-    if (!country) return
-    setSelectedCountry(country)
-    setSelectedCountryCode(country.value)
-    if (!city) return
-    setSelectedCity(city)
-  }, [setSelectedCountryCode])
 
   return (
     <Box sx={styles.container}>

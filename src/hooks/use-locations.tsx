@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { locationService } from '~/services/location-service'
 import useAxios from './use-axios'
 import { defaultResponses } from '~/constants'
@@ -18,6 +18,7 @@ const useLocations = ({
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
     countryCode
   )
+  const lastCitiesCodeRef = useRef<string | null>(countryCode)
   const [citiesCache, setCitiesCache] = useState<
     Record<string, LocationCityInterface[]>
   >({})
@@ -30,7 +31,7 @@ const useLocations = ({
     fetchData: fetchCountries
   } = useAxios({
     service: getCountries,
-    transform: (res) => res.data,
+    transform: (data) => data.data,
     fetchOnMount: fetchCountriesOnMount,
     defaultResponse: defaultResponses.array
   })
@@ -46,36 +47,36 @@ const useLocations = ({
     fetchData: fetchCities
   } = useAxios({
     service: getCities,
-    transform: (res) => res.data,
-    fetchOnMount: fetchCitiesOnMount,
+    transform: (data) => data.data,
+    fetchOnMount: Boolean(fetchCitiesOnMount && countryCode),
     defaultResponse: defaultResponses.array
   })
 
+  const fetchCitiesForCode = useCallback(
+    (code: string) => {
+      lastCitiesCodeRef.current = code
+      return fetchCities(code)
+    },
+    [fetchCities]
+  )
+
   const isCitiesCached = useCallback(
-    (newCities: LocationCityInterface[]) => {
+    (code: string, newCities: LocationCityInterface[]) => {
+      const cached = citiesCache[code]
+      if (!cached) return false
+      if (cached.length !== newCities.length) return false
       const newIds = new Set(newCities.map((c) => c.id))
-      for (const code in citiesCache) {
-        const cachedIds = citiesCache[code].map((c) => c.id)
-        if (
-          cachedIds.length === newCities.length &&
-          cachedIds.every((id) => newIds.has(id))
-        ) {
-          return true
-        }
-      }
-      return false
+      return cached.every((c) => newIds.has(c.id))
     },
     [citiesCache]
   )
 
   useEffect(() => {
-    if (!selectedCountryCode) return
     if (!Array.isArray(cities) || cities.length === 0) return
-    if (isCitiesCached(cities)) return
-    setCitiesCache((prev) => ({
-      ...prev,
-      [selectedCountryCode]: cities
-    }))
+    const code = lastCitiesCodeRef.current ?? selectedCountryCode
+    if (!code) return
+    if (isCitiesCached(code, cities)) return
+    setCitiesCache((prev) => ({ ...prev, [code]: cities }))
   }, [cities, selectedCountryCode, isCitiesCached])
 
   return {
@@ -89,7 +90,7 @@ const useLocations = ({
       data: cities,
       loading: loadingCities,
       error: citiesError,
-      fetch: fetchCities
+      fetch: fetchCitiesForCode
     },
     citiesCache,
     selectedCountryCode,
