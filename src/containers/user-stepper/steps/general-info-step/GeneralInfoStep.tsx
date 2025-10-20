@@ -17,7 +17,8 @@ import { useAppSelector } from '~/hooks/use-redux'
 import { GeneralData } from '~/context/types'
 import {
   cityOptionsHelper,
-  countryOptionsHelper
+  countryOptionsHelper,
+  handleRenderOptions
 } from '~/containers/user-stepper/steps/general-info-step/utils'
 
 interface GeneralInfoStepProps {
@@ -179,6 +180,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
               onChange={handleCountryChange}
               onOpen={handleCountryFetch}
               options={countryOptions}
+              renderOption={handleRenderOptions}
               value={selectedCountry}
             />
             <AppAutoComplete
@@ -189,6 +191,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
               onChange={handleCityChange}
               onOpen={handleCityFetch}
               options={cityOptions}
+              renderOption={handleRenderOptions}
               value={selectedCity}
             />
           </Box>

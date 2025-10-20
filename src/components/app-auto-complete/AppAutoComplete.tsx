@@ -62,11 +62,6 @@ const AppAutoComplete = ({
           label={label}
         />
       )}
-      renderOption={(props, option) => (
-        <li {...props} key={option.value}>
-          {option.title}
-        </li>
-      )}
     />
   )
 }

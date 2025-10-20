@@ -1,3 +1,5 @@
+import { HTMLAttributes } from 'react'
+import { OptionType } from '~/components/app-auto-complete/AppAutoComplete'
 import { LocationCityInterface, LocationCountryInterface } from '~/types'
 
 export const countryOptionsHelper = (data: LocationCountryInterface[]) => {
@@ -13,3 +15,12 @@ export const cityOptionsHelper = (data: LocationCityInterface[]) => {
     title: country.name
   }))
 }
+
+export const handleRenderOptions = (
+  props: HTMLAttributes<HTMLLIElement>,
+  option: OptionType
+) => (
+  <li {...props} key={option.value}>
+    {option.title}
+  </li>
+)
