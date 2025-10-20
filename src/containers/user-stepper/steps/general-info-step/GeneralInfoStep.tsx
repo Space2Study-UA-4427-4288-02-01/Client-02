@@ -88,12 +88,19 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
     _e: SyntheticEvent<Element, Event>,
     option: OptionType | null
   ) => {
-    console.log(option)
     setSelectedCountry(option)
-    updateGeneral(option ? { country: option.title } : { country: '' })
     setSelectedCountryCode(option ? option.value : null)
-    updateGeneral({ city: '' })
     setSelectedCity(null)
+    updateGeneral(
+      option ? { country: option.title, city: '' } : { country: '', city: '' }
+    )
+    if (option) {
+      sessionStorage.setItem('userCountry', JSON.stringify(option))
+      sessionStorage.removeItem('userCity')
+    } else {
+      sessionStorage.removeItem('userCountry')
+      sessionStorage.removeItem('userCity')
+    }
   }
 
   const handleCityFetch = () => {
@@ -106,16 +113,26 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
     _e: SyntheticEvent<Element, Event>,
     option: OptionType | null
   ) => {
-    console.log(option)
     setSelectedCity(option)
     updateGeneral(option ? { city: option.title } : { city: '' })
+    sessionStorage.setItem('userCity', JSON.stringify(option))
   }
 
-  const logData = () => {
-    // console.log(data)
-    // console.log(selectedCountryCode)
-    console.log(citiesCache)
-  }
+  useEffect(() => {
+    const countryString = sessionStorage.getItem('userCountry')
+    const cityString = sessionStorage.getItem('userCity')
+    const country = countryString
+      ? (JSON.parse(countryString) as OptionType | null)
+      : null
+    const city = cityString
+      ? (JSON.parse(cityString) as OptionType | null)
+      : null
+    if (!country) return
+    setSelectedCountry(country)
+    setSelectedCountryCode(country.value)
+    if (!city) return
+    setSelectedCity(city)
+  }, [setSelectedCountryCode])
 
   return (
     <Box sx={styles.container}>
@@ -123,7 +140,6 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
         <Box component='img' src={loginImg} sx={styles.img} />
       </Box>
       <Box sx={styles.rightBox}>
-        <button onClick={logData}>Button</button>
         <Box sx={styles.formContainer}>
           <Typography sx={{ mb: '10px' }}>
             {t('step.generalInfo.title')}

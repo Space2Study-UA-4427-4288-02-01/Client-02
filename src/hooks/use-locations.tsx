@@ -4,11 +4,17 @@ import useAxios from './use-axios'
 import { defaultResponses } from '~/constants'
 import { LocationCityInterface } from '~/types'
 
+export interface UseLocationsProps {
+  fetchCountriesOnMount?: boolean
+  fetchCitiesOnMount?: boolean
+  countryCode?: string | null
+}
+
 const useLocations = ({
   fetchCountriesOnMount = false,
   fetchCitiesOnMount = false,
   countryCode = null
-} = {}) => {
+}: UseLocationsProps = {}) => {
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
     countryCode
   )
@@ -46,12 +52,18 @@ const useLocations = ({
   })
 
   const isCitiesCached = useCallback(
-    (countryCode: string, newCities: LocationCityInterface[]) => {
-      const cached = citiesCache[countryCode]
-      console.log(cached)
-
-      if (!cached) return false
-      return cached.every((city) => newCities.some((c) => c.id === city.id))
+    (newCities: LocationCityInterface[]) => {
+      const newIds = new Set(newCities.map((c) => c.id))
+      for (const code in citiesCache) {
+        const cachedIds = citiesCache[code].map((c) => c.id)
+        if (
+          cachedIds.length === newCities.length &&
+          cachedIds.every((id) => newIds.has(id))
+        ) {
+          return true
+        }
+      }
+      return false
     },
     [citiesCache]
   )
@@ -59,7 +71,7 @@ const useLocations = ({
   useEffect(() => {
     if (!selectedCountryCode) return
     if (!Array.isArray(cities) || cities.length === 0) return
-    if (isCitiesCached(selectedCountryCode, cities)) return
+    if (isCitiesCached(cities)) return
     setCitiesCache((prev) => ({
       ...prev,
       [selectedCountryCode]: cities
