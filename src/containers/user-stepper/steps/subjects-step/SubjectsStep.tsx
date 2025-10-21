@@ -22,7 +22,6 @@ interface SubjectsStepProps {
 const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
   const { stepData, updateSubject } = useStepContext()
   const { subjects } = stepData[stepLabel] as SubjectValuesInterface
-  console.log('StepData:', stepData)
   const { t } = useTranslation()
 
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
@@ -31,6 +30,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
   const [selectedSubjects, setSelectedSubjects] = useState<OptionType | null>(
     null
   )
+
   const fetchCategoryRef = useRef(false)
 
   const {
@@ -45,12 +45,6 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     fetchData: fetchSubjects
   } = useSubjects({ category: selectedCategory })
 
-  const focusFetchCategories = () => {
-    if (fetchCategoryRef.current) return
-    fetchCategoryRef.current = true
-    void fetchCategories()
-  }
-
   const handleCategoryChange = (
     _e: SyntheticEvent<Element, Event>,
     newValue: OptionType | null
@@ -62,6 +56,12 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
       subjects: [...subjects]
     })
   }
+
+  useEffect(() => {
+    if (fetchCategoryRef.current) return
+    fetchCategoryRef.current = true
+    void fetchCategories()
+  }, [fetchCategories])
 
   useEffect(() => {
     if (selectedCategory) {
@@ -80,7 +80,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     if (!selectedSubjects) return
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
-      subjects: [...subjects, selectedSubjects.value]
+      subjects: [...subjects, selectedSubjects.title]
     })
     setSelectedSubjects(null)
   }
@@ -97,9 +97,9 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     return subjects.includes(subject)
   }
 
-  const subjectTitlesForChips = subjects
-    .map((id) => subjectsResponse.find((s) => s._id === id)?.name)
-    .filter(Boolean) as string[]
+  // let subjectTitlesForChips = subjects
+  //   .map((id) => subjectsResponse.find((s) => s._id === id)?.name)
+  //   .filter(Boolean) as string[]
 
   const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
     value: category._id,
@@ -126,7 +126,6 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
               disabled={categoriesLoading}
               label={t('step.interestsInfo.studyCategory')}
               onChange={handleCategoryChange}
-              onOpen={focusFetchCategories}
               options={categoryOptions}
               value={selectedCategory}
             />
@@ -151,7 +150,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
             <AppChipList
               defaultQuantity={5}
               handleChipDelete={handleDelete}
-              items={subjectTitlesForChips}
+              items={subjects ? subjects : []}
             />
           </Box>
         </Box>

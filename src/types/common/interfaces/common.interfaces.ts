@@ -1,4 +1,4 @@
-import { Offer, UserResponse, UserRoleEnum } from '~/types'
+import { Offer, UserResponse, UserRoleEnum, RequestParams } from '~/types'
 
 export interface ItemsWithCount<T> {
   count: number
@@ -37,6 +37,17 @@ export interface CategoryInterface {
 
 export interface CategoryNameInterface {
   _id: string
+  name: string
+}
+
+export interface LanguagesInterface {
+  [x: string]: string
+  code: string
+  _id: string
+  name: string
+}
+
+export interface LanguagesParams extends RequestParams {
   name: string
 }
 

@@ -29,6 +29,9 @@ export const URLs = {
     get: '/subjects',
     getNames: '/subjects/names'
   },
+  languages: {
+    get: '/constants/languages'
+  },
   locations: {
     getCountries: '/location/countries',
     getCities: (countryCode: string) =>
