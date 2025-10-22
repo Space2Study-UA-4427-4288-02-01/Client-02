@@ -23,7 +23,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
   const { stepData, updateSubject } = useStepContext()
   const { subjects } = stepData[stepLabel] as SubjectValuesInterface
   const { t } = useTranslation()
-
+  console.log('stepData', stepData)
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
   )
@@ -78,28 +78,30 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
 
   const handleAddSubject = () => {
     if (!selectedSubjects) return
+
+    const newSubject = {
+      id: selectedSubjects.value,
+      name: selectedSubjects.title
+    }
+    if (subjects.some((sub) => sub.id === newSubject.id)) return
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
-      subjects: [...subjects, selectedSubjects.value]
+      subjects: [...subjects, newSubject]
     })
     setSelectedSubjects(null)
   }
 
   const handleDelete = (subjectId: string) => {
-    const newSubjects = subjects.filter((sub) => sub !== subjectId)
+    const newSubjects = subjects.filter((sub) => sub.id !== subjectId)
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
-      subjects: [...newSubjects]
+      subjects: newSubjects
     })
   }
 
-  const subjectIsAdded = (subject: string): boolean => {
-    return subjects.includes(subject)
+  const subjectIsAdded = (subjectId: string): boolean => {
+    return subjects.some((sub) => sub.id === subjectId)
   }
-
-  const subjectTitlesForChips = subjects
-    .map((id) => subjectsResponse.find((s) => s._id === id)?.name)
-    .filter(Boolean) as string[]
 
   const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
     value: category._id,
@@ -153,7 +155,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
                 const subj = subjectsResponse.find((s) => s.name === name)
                 if (subj?._id) handleDelete(subj._id)
               }}
-              items={subjectTitlesForChips}
+              items={subjects.map((s) => s.name)}
             />
           </Box>
         </Box>
