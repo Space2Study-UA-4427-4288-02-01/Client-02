@@ -8,11 +8,11 @@ import AppButton from '~/components/app-button/AppButton'
 import AppAutoComplete, {
   OptionType
 } from '~/components/app-auto-complete/AppAutoComplete'
-import useCategories from '~/hooks/use-categories'
 import useSubjects from '~/hooks/use-subject'
 import { useStepContext } from '~/context/step-context'
 import { SubjectValuesInterface } from '~/context/types'
 import AppChipList from '~/components/app-chips-list/AppChipList'
+import useCategoriesNames from '~/hooks/use-categories-names'
 
 interface SubjectsStepProps {
   btnsBox?: React.ReactNode
@@ -37,7 +37,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     loading: categoriesLoading,
     response: categoryResponse = [],
     fetchData: fetchCategories
-  } = useCategories()
+  } = useCategoriesNames()
 
   const {
     loading: subjectsLoading,
@@ -80,13 +80,13 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     if (!selectedSubjects) return
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
-      subjects: [...subjects, selectedSubjects.title]
+      subjects: [...subjects, selectedSubjects.value]
     })
     setSelectedSubjects(null)
   }
 
-  const handleDelete = (subject: string) => {
-    const newSubjects = subjects.filter((sub) => sub !== subject)
+  const handleDelete = (subjectId: string) => {
+    const newSubjects = subjects.filter((sub) => sub !== subjectId)
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
       subjects: [...newSubjects]
@@ -97,9 +97,9 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     return subjects.includes(subject)
   }
 
-  // let subjectTitlesForChips = subjects
-  //   .map((id) => subjectsResponse.find((s) => s._id === id)?.name)
-  //   .filter(Boolean) as string[]
+  const subjectTitlesForChips = subjects
+    .map((id) => subjectsResponse.find((s) => s._id === id)?.name)
+    .filter(Boolean) as string[]
 
   const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
     value: category._id,
@@ -149,8 +149,11 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
             </AppButton>
             <AppChipList
               defaultQuantity={5}
-              handleChipDelete={handleDelete}
-              items={subjects ? subjects : []}
+              handleChipDelete={(name) => {
+                const subj = subjectsResponse.find((s) => s.name === name)
+                if (subj?._id) handleDelete(subj._id)
+              }}
+              items={subjectTitlesForChips}
             />
           </Box>
         </Box>
