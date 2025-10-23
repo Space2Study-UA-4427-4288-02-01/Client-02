@@ -18,6 +18,8 @@ import { GeneralData } from '~/context/types'
 import {
   cityOptionsHelper,
   countryOptionsHelper,
+  countryCodeHelper,
+  getCityByName,
   handleRenderOptions
 } from '~/containers/user-stepper/steps/general-info-step/utils'
 
@@ -28,26 +30,16 @@ interface GeneralInfoStepProps {
 
 const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   const { firstName, lastName } = useAppSelector((state) => state.appMain)
-
   const { stepData, updateGeneral } = useStepContext()
   const { data, errors } = stepData[stepLabel] as GeneralData
+  const { countries, cities, selectedCountryCode, setSelectedCountryCode } =
+    useLocations()
+  const { t } = useTranslation()
 
-  const {
-    countries,
-    cities,
-    citiesCache,
-    loading,
-    selectedCountryCode,
-    setSelectedCountryCode
-  } = useLocations()
-
-  const [countryOptions, setCountryOptions] = useState<OptionType[]>([])
-  const [cityOptions, setCityOptions] = useState<OptionType[]>([])
   const [selectedCountry, setSelectedCountry] = useState<OptionType | null>(
     null
   )
   const [selectedCity, setSelectedCity] = useState<OptionType | null>(null)
-  const { t } = useTranslation()
 
   useEffect(() => {
     if (data.firstName && data.lastName) return
@@ -57,42 +49,31 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   }, [data.firstName, data.lastName, firstName, lastName, updateGeneral])
 
   useEffect(() => {
-    if (!countries.data) return
-    const options = countryOptionsHelper(countries.data)
-    setCountryOptions(options)
-  }, [countries.data])
+    if (countries.data.length === 0) void countries.fetch()
+    if (!data.country) return
+    const codeByCountryName = countryCodeHelper(data.country, countries.data)
+    if (!codeByCountryName) return
+    setSelectedCountryCode(codeByCountryName)
+    setSelectedCountry((prev) =>
+      prev?.value === codeByCountryName && prev?.title === data.country
+        ? prev
+        : { value: codeByCountryName, title: data.country }
+    )
+  }, [countries, data.country, setSelectedCountryCode])
 
   useEffect(() => {
-    if (!selectedCountryCode) {
-      setCityOptions([])
-      return
-    }
-    const cachedCities = citiesCache[selectedCountryCode]
-    if (!cachedCities) {
-      setCityOptions([])
-      return
-    }
-    setCityOptions(cityOptionsHelper(cachedCities))
-  }, [citiesCache, selectedCountryCode])
-
-  useEffect(() => {
-    if (data.country || data.city) return
-    const countryString = sessionStorage.getItem('userCountry')
-    const cityString = sessionStorage.getItem('userCity')
-    const country = countryString
-      ? (JSON.parse(countryString) as OptionType | null)
-      : null
-    const city = cityString
-      ? (JSON.parse(cityString) as OptionType | null)
-      : null
-    if (!country) return
-    setSelectedCountry(country)
-    setSelectedCountryCode(country.value)
-    updateGeneral({ country: country.title })
-    if (!city) return
-    setSelectedCity(city)
-    updateGeneral({ city: city.title })
-  }, [data.country, data.city, setSelectedCountryCode, updateGeneral])
+    if (!selectedCountryCode) return
+    if (cities.data.length === 0) void cities.fetch(selectedCountryCode)
+    if (!data.city) return
+    const cityByName = getCityByName(data.city, cities.data)
+    if (!cityByName) return
+    setSelectedCity((prev) => {
+      const idStr = cityByName.id.toString()
+      return prev?.value === idStr && prev?.title === data.city
+        ? prev
+        : { value: idStr, title: data.city }
+    })
+  }, [cities, data.city, selectedCountryCode])
 
   const handleChange = (field: string, value: string): void => {
     updateGeneral({ [field]: value })
@@ -102,11 +83,6 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
     const validator = validations[field as keyof typeof validations]
     const error = validator?.(value) || ''
     updateGeneral({}, { [field]: error })
-  }
-
-  const handleCountryFetch = () => {
-    if (countries.data?.length > 0) return
-    void countries.fetch()
   }
 
   const handleCountryChange = (
@@ -119,19 +95,7 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
     updateGeneral(
       option ? { country: option.title, city: '' } : { country: '', city: '' }
     )
-    if (option) {
-      sessionStorage.setItem('userCountry', JSON.stringify(option))
-      sessionStorage.removeItem('userCity')
-    } else {
-      sessionStorage.removeItem('userCountry')
-      sessionStorage.removeItem('userCity')
-    }
-  }
-
-  const handleCityFetch = () => {
-    if (!selectedCountryCode) return
-    if (citiesCache[selectedCountryCode]) return
-    void cities.fetch(selectedCountryCode)
+    if (option?.value) void cities.fetch(option.value)
   }
 
   const handleCityChange = (
@@ -140,12 +104,10 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
   ) => {
     setSelectedCity(option)
     updateGeneral(option ? { city: option.title } : { city: '' })
-    if (option) {
-      sessionStorage.setItem('userCity', JSON.stringify(option))
-    } else {
-      sessionStorage.removeItem('userCity')
-    }
   }
+
+  const countryOptions: OptionType[] = countryOptionsHelper(countries.data)
+  const cityOptions: OptionType[] = cityOptionsHelper(cities.data)
 
   return (
     <Box sx={styles.container}>
@@ -188,9 +150,8 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
             <AppAutoComplete
               fullWidth
               label={t('common.labels.country')}
-              loading={loading}
+              loading={countries.loading}
               onChange={handleCountryChange}
-              onOpen={handleCountryFetch}
               options={countryOptions}
               renderOption={handleRenderOptions}
               value={selectedCountry}
@@ -199,9 +160,8 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
               disabled={!selectedCountryCode}
               fullWidth
               label={t('common.labels.city')}
-              loading={loading}
+              loading={cities.loading}
               onChange={handleCityChange}
-              onOpen={handleCityFetch}
               options={cityOptions}
               renderOption={handleRenderOptions}
               value={selectedCity}

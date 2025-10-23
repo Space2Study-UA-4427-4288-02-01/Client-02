@@ -16,6 +16,18 @@ export const cityOptionsHelper = (data: LocationCityInterface[]) => {
   }))
 }
 
+export const countryCodeHelper = (
+  country: string,
+  data: LocationCountryInterface[]
+) => {
+  const countryObj = data.find((c) => c.name === country)
+  return countryObj?.countryCode
+}
+
+export const getCityByName = (city: string, data: LocationCityInterface[]) => {
+  return data.find((c) => c.name === city)
+}
+
 export const handleRenderOptions = (
   props: HTMLAttributes<HTMLLIElement>,
   option: OptionType
