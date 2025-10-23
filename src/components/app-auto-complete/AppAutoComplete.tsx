@@ -23,7 +23,9 @@ interface AppAutoCompleteProps
   textFieldProps?: TextFieldProps
 }
 
-const defaultFilterOptions = createFilterOptions<OptionType>()
+const defaultFilterOptions = createFilterOptions<OptionType>({
+  matchFrom: 'start'
+})
 
 const AppAutoComplete = ({
   options,
