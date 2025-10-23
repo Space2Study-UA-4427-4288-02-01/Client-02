@@ -4,9 +4,9 @@ import { AxiosResponse } from 'axios'
 import { URLs } from '~/constants/request'
 import {
   CategoryInterface,
-  CategoryNameInterface,
   CategoriesParams,
-  LocationsWithTotal
+  LocationsWithTotal,
+  CategoryNamesResponse
 } from '~/types'
 
 export const categoryService = {
@@ -15,7 +15,9 @@ export const categoryService = {
   ): Promise<AxiosResponse<LocationsWithTotal<CategoryInterface>>> => {
     return axiosClient.get(URLs.categories.get, { params })
   },
-  getCategoriesNames: (): Promise<AxiosResponse<CategoryNameInterface[]>> => {
-    return axiosClient.get(URLs.categories.getNames)
+  getCategoriesNames: (
+    params?: Partial<CategoriesParams>
+  ): Promise<AxiosResponse<CategoryNamesResponse>> => {
+    return axiosClient.get(URLs.categories.getNames, { params })
   }
 }

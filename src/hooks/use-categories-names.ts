@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
 import { defaultResponses } from '~/constants'
-
 import useAxios from '~/hooks/use-axios'
 import { categoryService } from '~/services/category-service'
-import { CategoryNameInterface } from '~/types'
+import { CategoryNameInterface, CategoryNamesResponse } from '~/types'
 
 const useCategoriesNames = ({ fetchOnMount = false } = {}) => {
   const getCategoriesNames = useCallback(
@@ -12,10 +11,12 @@ const useCategoriesNames = ({ fetchOnMount = false } = {}) => {
   )
 
   const { loading, response, fetchData, error } = useAxios<
+    CategoryNamesResponse,
+    null,
     CategoryNameInterface[]
   >({
     service: getCategoriesNames,
-    transform: (res: CategoryNameInterface[]) => res,
+    transform: (data) => data.data,
     fetchOnMount,
     defaultResponse: defaultResponses.array
   })

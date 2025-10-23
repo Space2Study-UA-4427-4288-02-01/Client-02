@@ -40,6 +40,10 @@ export interface CategoryNameInterface {
   name: string
 }
 
+export type CategoryNamesResponse = {
+  data: CategoryNameInterface[]
+}
+
 export interface LanguagesInterface {
   [x: string]: string
   code: string
