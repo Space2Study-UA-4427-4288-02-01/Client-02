@@ -6,9 +6,14 @@ export interface GeneralValuesInterface {
   professionalSummary: string
 }
 
+export interface SubjectItem {
+  id: string
+  name: string
+}
+
 export interface SubjectValuesInterface {
   category: string
-  subjects: string[]
+  subjects: SubjectItem[]
 }
 
 export interface LanguageValuesInterface {

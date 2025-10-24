@@ -17,7 +17,7 @@ const UserStepper: FC<StepperProps> = ({ userRole }) => {
   const stepComponents = [
     <GeneralInfoStep key='1' stepLabel='generalInfo' />,
     <SubjectsStep key='2' stepLabel='interests' />,
-    <LanguageStep key='3' />,
+    <LanguageStep key='3' stepLabel='language' />,
     <AddPhotoStep key='4' stepLabel='photo' />
   ]
 

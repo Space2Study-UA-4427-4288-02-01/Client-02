@@ -8,11 +8,11 @@ import AppButton from '~/components/app-button/AppButton'
 import AppAutoComplete, {
   OptionType
 } from '~/components/app-auto-complete/AppAutoComplete'
-import useCategories from '~/hooks/use-categories'
 import useSubjects from '~/hooks/use-subject'
 import { useStepContext } from '~/context/step-context'
 import { SubjectValuesInterface } from '~/context/types'
 import AppChipList from '~/components/app-chips-list/AppChipList'
+import useCategoriesNames from '~/hooks/use-categories-names'
 
 interface SubjectsStepProps {
   btnsBox?: React.ReactNode
@@ -22,34 +22,27 @@ interface SubjectsStepProps {
 const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
   const { stepData, updateSubject } = useStepContext()
   const { subjects } = stepData[stepLabel] as SubjectValuesInterface
-  console.log('StepData:', stepData)
   const { t } = useTranslation()
-
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
   )
   const [selectedSubjects, setSelectedSubjects] = useState<OptionType | null>(
     null
   )
+
   const fetchCategoryRef = useRef(false)
 
   const {
     loading: categoriesLoading,
     response: categoryResponse = [],
     fetchData: fetchCategories
-  } = useCategories()
+  } = useCategoriesNames()
 
   const {
     loading: subjectsLoading,
     response: subjectsResponse = [],
     fetchData: fetchSubjects
   } = useSubjects({ category: selectedCategory })
-
-  const focusFetchCategories = () => {
-    if (fetchCategoryRef.current) return
-    fetchCategoryRef.current = true
-    void fetchCategories()
-  }
 
   const handleCategoryChange = (
     _e: SyntheticEvent<Element, Event>,
@@ -62,6 +55,12 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
       subjects: [...subjects]
     })
   }
+
+  useEffect(() => {
+    if (fetchCategoryRef.current) return
+    fetchCategoryRef.current = true
+    void fetchCategories()
+  }, [fetchCategories])
 
   useEffect(() => {
     if (selectedCategory) {
@@ -78,28 +77,37 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
 
   const handleAddSubject = () => {
     if (!selectedSubjects) return
+
+    const newSubject = {
+      id: selectedSubjects.value,
+      name: selectedSubjects.title
+    }
+    if (subjects.some((sub) => sub.id === newSubject.id)) return
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
-      subjects: [...subjects, selectedSubjects.value]
+      subjects: [...subjects, newSubject]
     })
     setSelectedSubjects(null)
   }
 
-  const handleDelete = (subject: string) => {
-    const newSubjects = subjects.filter((sub) => sub !== subject)
+  const handleDelete = (subjectId: string) => {
+    const newSubjects = subjects.filter((sub) => sub.id !== subjectId)
     updateSubject({
       category: selectedCategory ? selectedCategory.value : '',
-      subjects: [...newSubjects]
+      subjects: newSubjects
     })
   }
 
-  const subjectIsAdded = (subject: string): boolean => {
-    return subjects.includes(subject)
+  const subjectIsAdded = (subjectId: string): boolean => {
+    return subjects.some((sub) => sub.id === subjectId)
   }
 
-  const subjectTitlesForChips = subjects
-    .map((id) => subjectsResponse.find((s) => s._id === id)?.name)
-    .filter(Boolean) as string[]
+  const handleDeleteChip = (name: string) => {
+    const subj = subjects.find((s) => s.name === name)
+    if (subj?.id) handleDelete(subj.id)
+  }
+
+  const subjectsNames = subjects.map((sub) => sub.name)
 
   const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
     value: category._id,
@@ -126,7 +134,6 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
               disabled={categoriesLoading}
               label={t('step.interestsInfo.studyCategory')}
               onChange={handleCategoryChange}
-              onOpen={focusFetchCategories}
               options={categoryOptions}
               value={selectedCategory}
             />
@@ -150,8 +157,8 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
             </AppButton>
             <AppChipList
               defaultQuantity={5}
-              handleChipDelete={handleDelete}
-              items={subjectTitlesForChips}
+              handleChipDelete={handleDeleteChip}
+              items={subjectsNames}
             />
           </Box>
         </Box>
