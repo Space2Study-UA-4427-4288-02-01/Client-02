@@ -23,7 +23,6 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
   const { stepData, updateSubject } = useStepContext()
   const { subjects } = stepData[stepLabel] as SubjectValuesInterface
   const { t } = useTranslation()
-  console.log('stepData', stepData)
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
   )
