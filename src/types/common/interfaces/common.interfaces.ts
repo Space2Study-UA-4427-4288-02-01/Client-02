@@ -45,10 +45,7 @@ export type CategoryNamesResponse = {
 }
 
 export interface LanguagesInterface {
-  [x: string]: string
   code: string
-  _id: string
-  name: string
 }
 
 export interface LanguagesParams extends RequestParams {

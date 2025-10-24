@@ -103,6 +103,13 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
     return subjects.some((sub) => sub.id === subjectId)
   }
 
+  const handleDeleteChip = (name: string) => {
+    const subj = subjects.find((s) => s.name === name)
+    if (subj?.id) handleDelete(subj.id)
+  }
+
+  const subjectsNames = subjects.map((sub) => sub.name)
+
   const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
     value: category._id,
     title: category.name
@@ -151,11 +158,8 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
             </AppButton>
             <AppChipList
               defaultQuantity={5}
-              handleChipDelete={(name) => {
-                const subj = subjectsResponse.find((s) => s.name === name)
-                if (subj?._id) handleDelete(subj._id)
-              }}
-              items={subjects.map((s) => s.name)}
+              handleChipDelete={handleDeleteChip}
+              items={subjectsNames}
             />
           </Box>
         </Box>

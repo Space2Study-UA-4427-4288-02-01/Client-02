@@ -65,9 +65,7 @@ const LanguageStep: FC<LanguageStepProps> = ({ btnsBox, stepLabel }) => {
         <Box sx={styles.formRow}>
           <AppAutoComplete
             disabled={languageLoading}
-            getOptionKey={(option) =>
-              option && option.value ? option.value : Math.random().toString()
-            }
+            getOptionKey={(option) => option.value}
             getOptionLabel={(option) => option.title}
             label={t('step.languageInfo.languageLabel')}
             loading={languageLoading}
