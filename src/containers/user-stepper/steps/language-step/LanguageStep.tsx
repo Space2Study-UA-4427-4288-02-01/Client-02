@@ -13,12 +13,11 @@ import useLanguages from '~/hooks/use-languages'
 
 interface LanguageStepProps {
   btnsBox?: React.ReactNode
-  stepLabel: string
 }
 
-const LanguageStep: FC<LanguageStepProps> = ({ btnsBox, stepLabel }) => {
+const LanguageStep: FC<LanguageStepProps> = ({ btnsBox }) => {
   const { stepData, updateLanguage } = useStepContext()
-  const { language } = stepData[stepLabel] as LanguageValuesInterface
+  const { language } = stepData.language as LanguageValuesInterface
   console.log('stepData', stepData)
   const { t } = useTranslation()
 

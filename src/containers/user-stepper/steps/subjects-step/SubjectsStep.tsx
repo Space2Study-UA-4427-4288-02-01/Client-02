@@ -16,12 +16,11 @@ import useCategoriesNames from '~/hooks/use-categories-names'
 
 interface SubjectsStepProps {
   btnsBox?: React.ReactNode
-  stepLabel: string
 }
 
-const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox, stepLabel }) => {
+const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox }) => {
   const { stepData, updateSubject } = useStepContext()
-  const { subjects } = stepData[stepLabel] as SubjectValuesInterface
+  const { subjects } = stepData.subject as SubjectValuesInterface
   const { t } = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
