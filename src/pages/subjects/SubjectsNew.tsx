@@ -18,6 +18,7 @@ import {
   CategoryNameInterface,
   CategoryNamesResponse,
   LocationsWithTotal,
+  Response,
   SizeEnum,
   SubjectInterface,
   VisibilityEnum
@@ -37,26 +38,24 @@ import CardsList from '~/components/cards-list/CardsList'
 import AppToolbar from '~/components/app-toolbar/AppToolbar'
 import { getOpositeRole } from '~/utils/helper-functions'
 import { useAppSelector } from '~/hooks/use-redux'
+import useLoadMore from '~/hooks/use-load-more-new'
+import { AxiosResponse } from 'axios'
 
 const Subjects = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { t } = useTranslation()
   const { userRole } = useAppSelector((state) => state.appMain)
   const categoryId = searchParams.get('categoryId') ?? ''
-
-  const [subjectsList, setSubjectsList] = useState<SubjectInterface[]>([])
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
   const [searchString, setSearchString] = useState('')
   const [search, setSearch] = useState(false)
-
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
   )
-
   const initialized = useRef(false)
 
-  const getSubjects = async () => {
+  const getSubjects = async (): Promise<
+    AxiosResponse<Response<SubjectInterface>>
+  > => {
     return await subjectService.getSubjects({
       ...(categoryId && { categoryId }),
       ...(page && { page }),
@@ -89,6 +88,18 @@ const Subjects = () => {
     defaultResponse: defaultResponses.array
   })
 
+  const {
+    page,
+    isExpandable,
+    list: subjectsList,
+    loadMore,
+    resetData
+  } = useLoadMore<SubjectInterface>({
+    deps: [categoryId, search],
+    response: subjectsResponse,
+    fetcher: fetchSubjects
+  })
+
   const categoryOptions: OptionType[] = categoriesResponse.map((category) => ({
     value: category._id,
     title: category.name
@@ -117,18 +128,6 @@ const Subjects = () => {
     visibility: search ? VisibilityEnum.Visible : VisibilityEnum.Hidden
   }
 
-  const loadMore = () => {
-    initialized.current = false
-    setPage((prevPage) => prevPage + 1)
-  }
-
-  const resetData = () => {
-    initialized.current = false
-    setPage(1)
-    setSubjectsList([])
-    setTotalPages(1)
-  }
-
   const onClear = () => {
     resetData()
     setSearch(false)
@@ -153,22 +152,9 @@ const Subjects = () => {
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true
-      void fetchSubjects()
+      void fetchCategories()
     }
-  }, [categoryId, page, search])
-
-  useEffect(() => {
-    void fetchCategories()
   }, [])
-
-  useEffect(() => {
-    setSubjectsList((prevSubjects) => [
-      ...prevSubjects,
-      ...(subjectsResponse?.data ?? [])
-    ])
-
-    setTotalPages(subjectsResponse.totalPages || 1)
-  }, [subjectsResponse])
 
   return (
     <PageWrapper>
@@ -208,7 +194,10 @@ const Subjects = () => {
         <AppTextField
           errorMsg={''}
           label={''}
-          onChange={(e) => setSearchString(e.target.value)}
+          onChange={(e) => {
+            setSearch(false)
+            setSearchString(e.target.value)
+          }}
           size='medium'
           type='text'
           value={searchString}
@@ -231,7 +220,7 @@ const Subjects = () => {
       <CardsList
         btnText={t('categoriesPage.viewMore')}
         cards={cards}
-        isExpandable={page < totalPages}
+        isExpandable={isExpandable}
         loading={subjectsLoading || subjectNamesLoading}
         onClick={loadMore}
       />

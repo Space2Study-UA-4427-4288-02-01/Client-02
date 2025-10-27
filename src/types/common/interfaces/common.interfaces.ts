@@ -5,6 +5,12 @@ export interface ItemsWithCount<T> {
   items: T[]
 }
 
+export type Response<T> = {
+  data: T[]
+  totalPages?: number
+  currentPage?: number
+}
+
 export interface LocationsWithTotal<T> {
   total?: number
   currentPage?: number
