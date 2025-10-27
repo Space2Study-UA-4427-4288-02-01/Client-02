@@ -7,6 +7,8 @@ export interface ItemsWithCount<T> {
 
 export interface LocationsWithTotal<T> {
   total?: number
+  currentPage?: number
+  totalPages?: number
   data: T[]
 }
 

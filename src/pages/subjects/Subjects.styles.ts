@@ -16,7 +16,9 @@ export const styles = {
     justifyContent: 'space-between'
   },
   searchToolbar: {
-    borderRadius: '70px'
+    borderRadius: '70px',
+    alignItems: 'flex-start',
+    gap: '20px'
   },
   showAllOffers: {
     display: 'flex',
@@ -39,5 +41,14 @@ export const styles = {
       typography: { sm: 'body1', xs: 'body2' },
       color: 'primary.500'
     }
+  },
+  searchBtn: {
+    minWidth: { xs: '44px' },
+    p: { xs: '7px 12px', sm: '12px 24px' },
+    ml: { xs: '5px', sm: '25px' }
+  },
+  listBox: {
+    flex: 1,
+    width: 100
   }
 }
