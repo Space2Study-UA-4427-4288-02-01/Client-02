@@ -40,13 +40,22 @@ const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
     null
   )
   const [selectedCity, setSelectedCity] = useState<OptionType | null>(null)
+  const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
-    if (data.firstName && data.lastName) return
-    if (firstName && lastName) {
+    if (initialized) return
+    if (!data.firstName && !data.lastName && firstName && lastName) {
       updateGeneral({ firstName, lastName })
     }
-  }, [data.firstName, data.lastName, firstName, lastName, updateGeneral])
+    setInitialized(true)
+  }, [
+    data.firstName,
+    data.lastName,
+    initialized,
+    firstName,
+    lastName,
+    updateGeneral
+  ])
 
   useEffect(() => {
     if (countries.data.length === 0) void countries.fetch()
