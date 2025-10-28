@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { Response } from '~/types'
+import { Response, ServiceFunction } from '~/types'
+import useAxios from './use-axios'
 
 type UseLoadMoreProps<Data> = {
-  fetcher: () => Promise<void>
-  response: Response<Data>
-  deps?: (string | boolean)[]
+  service: ServiceFunction<Response<Data>, Params>
 }
 
 type Return<Data> = {
+  loading: boolean
   page: number
   totalPages: number
   list: Data[]
@@ -16,15 +16,23 @@ type Return<Data> = {
   resetData: () => void
 }
 
-function useLoadMore<Data>({
-  deps = [],
-  fetcher,
-  response
-}: UseLoadMoreProps<Data>): Return<Data> {
+export type Params = {
+  page: number
+}
+
+export type LoadMoreService<Data> = ServiceFunction<Response<Data>, Params>
+
+function useLoadMore<Data>({ service }: UseLoadMoreProps<Data>): Return<Data> {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [list, setList] = useState<Data[]>([])
   const initialized = useRef(false)
+
+  const { loading, response, fetchData } = useAxios<Response<Data>, Params>({
+    service,
+    fetchOnMount: false,
+    defaultResponse: { data: [] }
+  })
 
   const loadMore = () => {
     initialized.current = false
@@ -41,17 +49,17 @@ function useLoadMore<Data>({
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true
-      void fetcher()
+      void fetchData({ page })
     }
-  }, [page, ...deps])
+  }, [fetchData, page])
 
   useEffect(() => {
     setList((prevList) => [...prevList, ...(response?.data ?? [])])
-
     setTotalPages(response?.totalPages || 1)
   }, [response])
 
   return {
+    loading,
     page,
     totalPages,
     list,

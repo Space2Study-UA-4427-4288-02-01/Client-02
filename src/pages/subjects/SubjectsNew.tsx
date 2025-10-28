@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useRef, useState } from 'react'
+import { SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Box, IconButton } from '@mui/material'
@@ -8,17 +8,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ClearIcon from '@mui/icons-material/Clear'
 import PageWrapper from '~/components/page-wrapper/PageWrapper'
 import AppTextField from '~/components/app-text-field/AppTextField'
-
 import { subjectService } from '~/services/subject-service'
 import { categoryService } from '~/services/category-service'
-import useAxios from '~/hooks/use-axios'
 import { defaultResponses } from '~/constants'
 import {
   ButtonVariantEnum,
   CategoryNameInterface,
   CategoryNamesResponse,
-  LocationsWithTotal,
-  Response,
   SizeEnum,
   SubjectInterface,
   VisibilityEnum
@@ -30,16 +26,15 @@ import OfferRequestBlock from '~/containers/find-offer/offer-request-block/Offer
 import TitleWithDescription from '~/components/title-with-description/TitleWithDescription'
 import { styles } from '~/pages/subjects/Subjects.styles'
 import serviceIcon from '~/assets/img/student-home-page/service_icon.png'
-
 import DirectionLink from '~/components/direction-link/DirectionLink'
 import { authRoutes } from '~/router/constants/authRoutes'
 import CardWithLink from '~/components/card-with-link/CardWithLink'
 import CardsList from '~/components/cards-list/CardsList'
 import AppToolbar from '~/components/app-toolbar/AppToolbar'
 import { getOpositeRole } from '~/utils/helper-functions'
+import useAxios from '~/hooks/use-axios'
 import { useAppSelector } from '~/hooks/use-redux'
-import useLoadMore from '~/hooks/use-load-more-new'
-import { AxiosResponse } from 'axios'
+import useLoadMore, { LoadMoreService, Params } from '~/hooks/use-load-more-new'
 
 const Subjects = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -53,29 +48,20 @@ const Subjects = () => {
   )
   const initialized = useRef(false)
 
-  const getSubjects = async (): Promise<
-    AxiosResponse<Response<SubjectInterface>>
-  > => {
-    return await subjectService.getSubjects({
-      ...(categoryId && { categoryId }),
-      ...(page && { page }),
-      ...(searchString && { search: searchString })
-    })
-  }
+  const getSubjects = useCallback(
+    ({ page }: Params) => {
+      return subjectService.getSubjects({
+        ...(categoryId && { categoryId }),
+        ...(page && { page }),
+        ...(search && searchString && { search: searchString })
+      })
+    },
+    [categoryId, searchString, search]
+  )
 
   const getCategoriesNames = async () => {
     return await categoryService.getCategoriesNames()
   }
-
-  const {
-    loading: subjectsLoading,
-    response: subjectsResponse,
-    fetchData: fetchSubjects
-  } = useAxios<LocationsWithTotal<SubjectInterface>>({
-    service: getSubjects,
-    fetchOnMount: false,
-    defaultResponse: { data: [] }
-  })
 
   const {
     loading: subjectNamesLoading,
@@ -89,15 +75,13 @@ const Subjects = () => {
   })
 
   const {
-    page,
+    loading: subjectsLoading,
     isExpandable,
     list: subjectsList,
     loadMore,
     resetData
   } = useLoadMore<SubjectInterface>({
-    deps: [categoryId, search],
-    response: subjectsResponse,
-    fetcher: fetchSubjects
+    service: getSubjects as unknown as LoadMoreService<SubjectInterface>
   })
 
   const categoryOptions: OptionType[] = categoriesResponse.map((category) => ({
@@ -154,7 +138,7 @@ const Subjects = () => {
       initialized.current = true
       void fetchCategories()
     }
-  }, [])
+  }, [fetchCategories])
 
   return (
     <PageWrapper>
