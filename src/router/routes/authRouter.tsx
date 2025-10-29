@@ -17,7 +17,7 @@ import { UserRoleEnum } from '~/types'
 import { userProfileLoader } from '../constants/loaders'
 
 const Categories = lazy(() => import('~/pages/categories/Categories'))
-const Subjects = lazy(() => import('~/pages/subjects/Subjects'))
+const Subjects = lazy(() => import('~/pages/subjects/SubjectsNew'))
 const FindOffers = lazy(() => import('~/pages/find-offers/FindOffers'))
 const TutorProfile = lazy(() => import('~/pages/tutor-profile/TutorProfile'))
 const MyResources = lazy(() => import('~/pages/my-resources/MyResources'))
