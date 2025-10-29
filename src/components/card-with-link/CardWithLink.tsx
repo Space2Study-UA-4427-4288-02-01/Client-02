@@ -7,7 +7,7 @@ import TitleWithDescription from '~/components/title-with-description/TitleWithD
 import { styles } from '~/components/card-with-link/CardWithLink.styles'
 
 interface CardWithLinkProps {
-  img: string
+  img: string | React.ReactNode
   title: string
   description: string
   link: string
@@ -21,7 +21,11 @@ const CardWithLink: FC<CardWithLinkProps> = ({
 }) => {
   return (
     <AppCard link={link}>
-      <Box alt='item image' component='img' src={img} sx={styles.img} />
+      {typeof img === 'string' ? (
+        <Box alt='item image' component='img' src={img} sx={styles.img} />
+      ) : img != null ? (
+        <Box sx={styles.img}>{img}</Box>
+      ) : null}
       <TitleWithDescription
         description={description}
         style={styles.titleWithDescription}

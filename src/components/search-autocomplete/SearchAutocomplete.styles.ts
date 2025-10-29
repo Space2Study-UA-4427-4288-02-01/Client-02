@@ -4,6 +4,8 @@ export const styles = {
   container: {
     width: '100%',
     maxHeight: '48px',
+    p: '27px',
+    height: '100%',
     backgroundColor: 'basic.white',
     borderRadius: '70px',
     display: 'flex',
@@ -19,9 +21,7 @@ export const styles = {
     color: 'primary.700',
     mr: '15px'
   },
-  input: {
-    bottom: '8px'
-  },
+  input: {},
   inputLabel: {
     color: palette.primary[300]
   },
