@@ -9,9 +9,14 @@ import {
   CategoryNamesResponse
 } from '~/types'
 
+type CategoryParams = {
+  page?: number
+  search?: string
+}
+
 export const categoryService = {
   getCategories: (
-    params?: Partial<CategoriesParams>
+    params?: CategoryParams
   ): Promise<AxiosResponse<LocationsWithTotal<CategoryInterface>>> => {
     return axiosClient.get(URLs.categories.get, { params })
   },

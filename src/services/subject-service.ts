@@ -9,9 +9,15 @@ import {
 } from '~/types'
 import { createUrlPath } from '~/utils/helper-functions'
 
+type SubjectsParams = {
+  categoryId?: string
+  page?: number
+  search?: string
+}
+
 export const subjectService = {
   getSubjects: (
-    params?: Pick<SubjectInterface, 'categoryId'>,
+    params?: SubjectsParams,
     categoryId?: string
   ): Promise<AxiosResponse<LocationsWithTotal<SubjectInterface>>> => {
     const category = createUrlPath(URLs.categories.get, categoryId)
