@@ -44,8 +44,9 @@ const Subjects = () => {
   const { t } = useTranslation()
   const { userRole } = useAppSelector((state) => state.appMain)
   const categoryId = searchParams.get('categoryId') ?? ''
-  const [searchString, setSearchString] = useState('')
-  const [search, setSearch] = useState(false)
+  const initialSearch = searchParams.get('search') ?? ''
+  const [searchString, setSearchString] = useState(initialSearch)
+  const [search, setSearch] = useState(Boolean(initialSearch))
   const { openModal } = useModalContext()
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
@@ -60,7 +61,7 @@ const Subjects = () => {
         ...(search && searchString && { search: searchString })
       })
     },
-    [categoryId, searchString, search]
+    [categoryId, search, searchString]
   )
 
   const getCategoriesNames = async () => {
@@ -120,18 +121,20 @@ const Subjects = () => {
     resetData()
     setSearch(false)
     setSearchString('')
-  }
-
-  const handleSearch = () => {
-    setSearch(true)
-    resetData()
+    setSearchParams(initialSearch ? { categoryId } : {})
   }
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      setSearch(true)
-      resetData()
+      handleSearch()
     }
+  }
+
+  const handleSearch = () => {
+    searchParams.set('search', searchString ?? '')
+    setSearchParams(searchParams)
+    setSearch(true)
+    resetData()
   }
 
   const handleCategoryChange = (

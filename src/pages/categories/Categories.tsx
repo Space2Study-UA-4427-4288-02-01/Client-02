@@ -28,12 +28,15 @@ import ClearIcon from '@mui/icons-material/Clear'
 import NotFoundResults from '~/components/not-found-results/NotFoundResults'
 import { useModalContext } from '~/context/modal-context'
 import CreateSubjectModal from '~/containers/find-offer/create-new-subject/CreateNewSubject'
+import { useSearchParams } from 'react-router-dom'
 
 const Categories = () => {
   const { t } = useTranslation()
-  const [search, setSearch] = useState(false)
   const { openModal } = useModalContext()
-  const [searchString, setSearchString] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialSearch = searchParams.get('search') ?? ''
+  const [search, setSearch] = useState(Boolean(initialSearch))
+  const [searchString, setSearchString] = useState(initialSearch)
   const getCategories = useCallback(
     ({ page }: Params) => {
       return categoryService.getCategories({
@@ -65,16 +68,18 @@ const Categories = () => {
     resetData()
     setSearch(false)
     setSearchString('')
+    setSearchParams({})
   }
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      setSearch(true)
-      resetData()
+      handleSearch()
     }
   }
 
   const handleSearch = () => {
+    searchParams.set('search', searchString ?? '')
+    setSearchParams(searchParams)
     setSearch(true)
     resetData()
   }
