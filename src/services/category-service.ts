@@ -6,13 +6,9 @@ import {
   CategoryInterface,
   CategoriesParams,
   LocationsWithTotal,
-  CategoryNamesResponse
+  CategoryNamesResponse,
+  CategoryParams
 } from '~/types'
-
-type CategoryParams = {
-  page?: number
-  search?: string
-}
 
 export const categoryService = {
   getCategories: (

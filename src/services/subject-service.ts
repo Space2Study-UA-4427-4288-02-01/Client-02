@@ -5,15 +5,10 @@ import { URLs } from '~/constants/request'
 import {
   LocationsWithTotal,
   SubjectInterface,
-  SubjectNameInterface
+  SubjectNameInterface,
+  SubjectsParams
 } from '~/types'
 import { createUrlPath } from '~/utils/helper-functions'
-
-type SubjectsParams = {
-  categoryId?: string
-  page?: number
-  search?: string
-}
 
 export const subjectService = {
   getSubjects: (

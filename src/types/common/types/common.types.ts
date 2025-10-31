@@ -24,3 +24,14 @@ export type Sort = {
   order: SortEnum
   orderBy: string
 }
+
+export type CategoryParams = {
+  page?: number
+  search?: string
+}
+
+export type SubjectsParams = {
+  categoryId?: string
+  page?: number
+  search?: string
+}
