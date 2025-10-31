@@ -23,15 +23,20 @@ export const styles = {
   img: {
     width: '100%',
     borderRadius: '20px',
-    mt: { xs: '20px', md: '0px' }
+    objectFit: 'cover'
   },
   imgContainer: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
+    border: '1px dashed',
+    borderColor: 'primary.200',
+    borderRadius: '20px',
     maxWidth: '440px',
+    maxHeight: '440px',
+    height: '100%',
     width: '100%',
-    flex: 1,
-    pb: { xs: '16px', sm: '26px', md: '52px' }
+    flex: 1
   },
   uploadBox: {
     display: 'flex',
@@ -67,6 +72,17 @@ export const styles = {
   },
   description: {
     mb: '20px'
+  },
+  dropzone: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    cursor: 'pointer'
+  },
+  icon: {
+    fontSize: '40px',
+    mb: '10px'
   },
   fileUploader: {
     button: {
