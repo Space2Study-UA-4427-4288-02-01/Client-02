@@ -26,5 +26,10 @@ export const styles = {
   },
   list: {
     p: 2
+  },
+  icon: {
+    fontSize: 40,
+    borderRadius: 1,
+    p: '10px'
   }
 }

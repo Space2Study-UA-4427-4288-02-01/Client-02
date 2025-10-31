@@ -131,9 +131,15 @@ const Subjects = () => {
   }
 
   const handleSearch = () => {
-    searchParams.set('search', searchString ?? '')
-    setSearchParams(searchParams)
-    setSearch(true)
+    if (searchString) {
+      searchParams.set('search', searchString)
+      setSearchParams(searchParams)
+      setSearch(true)
+    } else {
+      searchParams.delete('search')
+      setSearchParams(searchParams)
+      setSearch(false)
+    }
     resetData()
   }
 

@@ -78,9 +78,15 @@ const Categories = () => {
   }
 
   const handleSearch = () => {
-    searchParams.set('search', searchString ?? '')
-    setSearchParams(searchParams)
-    setSearch(true)
+    if (searchString) {
+      searchParams.set('search', searchString)
+      setSearchParams(searchParams)
+      setSearch(true)
+    } else {
+      searchParams.delete('search')
+      setSearchParams(searchParams)
+      setSearch(false)
+    }
     resetData()
   }
 
@@ -95,10 +101,8 @@ const Categories = () => {
             img={
               <IconComponent
                 sx={{
-                  color: item.appearance?.color ?? '#000',
-                  fontSize: 40,
-                  borderRadius: 1,
-                  p: '10px',
+                  ...styles.icon,
+                  color: item.appearance?.color || '#000',
                   backgroundColor: item.appearance?.color + '33'
                 }}
               />
