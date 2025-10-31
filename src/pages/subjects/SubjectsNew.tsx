@@ -36,6 +36,8 @@ import useAxios from '~/hooks/use-axios'
 import { useAppSelector } from '~/hooks/use-redux'
 import useLoadMore, { LoadMoreService, Params } from '~/hooks/use-load-more-new'
 import NotFoundResults from '~/components/not-found-results/NotFoundResults'
+import { useModalContext } from '~/context/modal-context'
+import CreateSubjectModal from '~/containers/find-offer/create-new-subject/CreateNewSubject'
 
 const Subjects = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -44,6 +46,7 @@ const Subjects = () => {
   const categoryId = searchParams.get('categoryId') ?? ''
   const [searchString, setSearchString] = useState('')
   const [search, setSearch] = useState(false)
+  const { openModal } = useModalContext()
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
   )
@@ -163,6 +166,8 @@ const Subjects = () => {
     }
   }, [categoriesResponse, categoryId])
 
+  const handleOpenModal = () => openModal({ component: <CreateSubjectModal /> })
+
   return (
     <PageWrapper>
       <OfferRequestBlock />
@@ -230,6 +235,7 @@ const Subjects = () => {
         <NotFoundResults
           buttonText={t('errorMessages.buttonRequest', { name: 'subject' })}
           description={t('errorMessages.tryAgainText', { name: 'subject' })}
+          onClick={handleOpenModal}
         />
       ) : (
         <CardsList

@@ -27,6 +27,7 @@ import AppTextField from '~/components/app-text-field/AppTextField'
 import ClearIcon from '@mui/icons-material/Clear'
 import NotFoundResults from '~/components/not-found-results/NotFoundResults'
 import { useModalContext } from '~/context/modal-context'
+import CreateSubjectModal from '~/containers/find-offer/create-new-subject/CreateNewSubject'
 
 const Categories = () => {
   const { t } = useTranslation()
@@ -106,7 +107,7 @@ const Categories = () => {
     [categoryResponse, oppositeRole, t]
   )
 
-  const handleOpenModal = () => openModal
+  const handleOpenModal = () => openModal({ component: <CreateSubjectModal /> })
 
   return (
     <PageWrapper>

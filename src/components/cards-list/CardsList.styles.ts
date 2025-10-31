@@ -3,7 +3,7 @@ export const styles = {
     display: 'grid',
     justifyContent: 'center',
     width: '100%',
-    p: 2,
+    pt: 2,
     gridTemplateColumns: {
       xs: 'repeat(1, minmax(264px, 1fr))',
       sm: 'repeat(2, minmax(264px, 1fr))',
