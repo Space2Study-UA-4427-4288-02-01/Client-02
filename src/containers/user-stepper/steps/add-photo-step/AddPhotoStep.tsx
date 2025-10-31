@@ -9,13 +9,12 @@ import { PhotoValuesInterface } from '~/context/types'
 
 interface AddPhotoStepProps {
   btnsBox?: React.ReactNode
-  stepLabel: string
 }
 
-const AddPhotoStep: FC<AddPhotoStepProps> = ({ btnsBox, stepLabel }) => {
+const AddPhotoStep: FC<AddPhotoStepProps> = ({ btnsBox }) => {
   const { t } = useTranslation()
   const { stepData, updatePhoto } = useStepContext()
-  const { photo } = stepData[stepLabel] as PhotoValuesInterface
+  const { photo } = stepData.photo as PhotoValuesInterface
   const [preview, setPreview] = useState<string>('')
 
   useEffect(() => {

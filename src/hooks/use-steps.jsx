@@ -72,10 +72,10 @@ const useSteps = ({ steps }) => {
     uploadPhoto(userId, photo)
 
     const { firstName, lastName, country, city, professionalSummary } =
-      stepData.generalInfo.data
+      stepData.generalData.data
 
     const { language } = stepData.language
-    const { subjects } = stepData.subjects
+    const { subjects } = stepData.subject
 
     const data = {
       firstName,

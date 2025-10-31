@@ -30,13 +30,12 @@ const StepProvider = ({ children, userRole }: StepProviderProps) => {
 
   const steps =
     userRole === UserRoleEnum.Student ? stepLabels.student : stepLabels.tutor
-  const [generalLabel, subjectLabel, languageLabel, photoLabel] = steps
 
   const stepData: StepData = {
-    [generalLabel]: generalData,
-    [subjectLabel]: subject,
-    [languageLabel]: language,
-    [photoLabel]: photo
+    generalData,
+    subject,
+    language,
+    photo
   }
 
   const updateGeneral = (

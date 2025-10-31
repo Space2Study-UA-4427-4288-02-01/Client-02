@@ -25,13 +25,12 @@ import {
 
 interface GeneralInfoStepProps {
   btnsBox?: React.ReactNode
-  stepLabel: string
 }
 
-const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox, stepLabel }) => {
+const GeneralInfoStep: FC<GeneralInfoStepProps> = ({ btnsBox }) => {
   const { firstName, lastName } = useAppSelector((state) => state.appMain)
   const { stepData, updateGeneral } = useStepContext()
-  const { data, errors } = stepData[stepLabel] as GeneralData
+  const { data, errors } = stepData.generalData as GeneralData
   const { countries, cities, selectedCountryCode, setSelectedCountryCode } =
     useLocations()
   const { t } = useTranslation()
