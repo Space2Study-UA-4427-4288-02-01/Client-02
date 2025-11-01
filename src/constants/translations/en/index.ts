@@ -27,6 +27,7 @@ import findOffers from './find-offer-page.json'
 import filters from './filters.json'
 import offerPage from './offer-page.json'
 import offerDetailsPage from './offer-details-page.json'
+import findOfferPage from './find-offer-page.json'
 import cooperationsPage from './cooperations-page.json'
 import myResourcesPage from './my-resources-page.json'
 import questionPage from './question-page.json'
@@ -63,6 +64,7 @@ const en = {
     filters,
     offerPage,
     offerDetailsPage,
+    findOfferPage,
     cooperationsPage,
     myResourcesPage,
     questionPage,
