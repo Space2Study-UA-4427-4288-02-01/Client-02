@@ -5,19 +5,14 @@ import { URLs } from '~/constants/request'
 import {
   LocationsWithTotal,
   SubjectInterface,
-  SubjectNameInterface
+  SubjectNameInterface,
+  SubjectsParams
 } from '~/types'
 import { createUrlPath } from '~/utils/helper-functions'
 
-type Params = {
-  categoryId?: string
-  page?: number
-  search?: string
-}
-
 export const subjectService = {
   getSubjects: (
-    params?: Params,
+    params?: SubjectsParams,
     categoryId?: string
   ): Promise<AxiosResponse<LocationsWithTotal<SubjectInterface>>> => {
     const category = createUrlPath(URLs.categories.get, categoryId)

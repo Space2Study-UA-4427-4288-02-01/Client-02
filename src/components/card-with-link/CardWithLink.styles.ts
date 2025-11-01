@@ -11,6 +11,7 @@ export const styles = {
       minWidth: '110px',
       margin: 0,
       mb: 0,
+      pt: '8px',
       lineHeight: '24px',
       textAlign: 'start'
     },

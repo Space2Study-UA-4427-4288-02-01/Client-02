@@ -21,7 +21,9 @@ import IconButton from '@mui/material/IconButton'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 
-import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
+import AppAutoComplete, {
+  OptionType
+} from '~/components/app-auto-complete/AppAutoComplete'
 import useBreakpoints from '~/hooks/use-breakpoints'
 import { styles } from '~/components/search-autocomplete/SearchAutocomplete.styles'
 import {
@@ -32,7 +34,10 @@ import {
 } from '~/types'
 
 interface SearchAutocompleteProps
-  extends Omit<AutocompleteProps<string, false, true, true>, 'renderInput'> {
+  extends Omit<
+    AutocompleteProps<OptionType, false, true, true>,
+    'renderInput'
+  > {
   search: string
   setSearch: Dispatch<SetStateAction<string>>
   onSearchChange?: () => void
@@ -53,10 +58,10 @@ const SearchAutocomplete = ({
   const { isMobile } = useBreakpoints()
 
   const filterOptions = (
-    options: string[],
-    state: FilterOptionsState<string>
+    options: OptionType[],
+    state: FilterOptionsState<OptionType>
   ) => {
-    const defaultFilterOptions = createFilterOptions<string>()
+    const defaultFilterOptions = createFilterOptions<OptionType>()
     return defaultFilterOptions(options, state).slice(0, 6)
   }
 
@@ -86,7 +91,7 @@ const SearchAutocomplete = ({
 
   const labelStyle = {
     ...styles.inputLabel,
-    visibility: searchInput && VisibilityEnum.Hidden
+    visibility: searchInput ? VisibilityEnum.Hidden : VisibilityEnum.Visible
   }
   const clearIconVisibility = {
     visibility: searchInput ? VisibilityEnum.Visible : VisibilityEnum.Hidden
@@ -99,7 +104,6 @@ const SearchAutocomplete = ({
       <AppAutoComplete
         ListboxProps={{ style: styles.listBox }}
         filterOptions={filterOptions}
-        freeSolo
         hideClearIcon
         inputValue={searchInput}
         onChange={handleAutoCompleteChange}

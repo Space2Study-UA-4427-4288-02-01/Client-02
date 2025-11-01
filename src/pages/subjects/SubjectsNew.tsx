@@ -35,14 +35,19 @@ import { getOpositeRole } from '~/utils/helper-functions'
 import useAxios from '~/hooks/use-axios'
 import { useAppSelector } from '~/hooks/use-redux'
 import useLoadMore, { LoadMoreService, Params } from '~/hooks/use-load-more-new'
+import NotFoundResults from '~/components/not-found-results/NotFoundResults'
+import { useModalContext } from '~/context/modal-context'
+import CreateSubjectModal from '~/containers/find-offer/create-new-subject/CreateNewSubject'
 
 const Subjects = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { t } = useTranslation()
   const { userRole } = useAppSelector((state) => state.appMain)
   const categoryId = searchParams.get('categoryId') ?? ''
-  const [searchString, setSearchString] = useState('')
-  const [search, setSearch] = useState(false)
+  const initialSearch = searchParams.get('search') ?? ''
+  const [searchString, setSearchString] = useState(initialSearch)
+  const [search, setSearch] = useState(Boolean(initialSearch))
+  const { openModal } = useModalContext()
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
   )
@@ -56,7 +61,7 @@ const Subjects = () => {
         ...(search && searchString && { search: searchString })
       })
     },
-    [categoryId, searchString, search]
+    [categoryId, search, searchString]
   )
 
   const getCategoriesNames = async () => {
@@ -116,10 +121,25 @@ const Subjects = () => {
     resetData()
     setSearch(false)
     setSearchString('')
+    setSearchParams(initialSearch ? { categoryId } : {})
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSearch()
+    }
   }
 
   const handleSearch = () => {
-    setSearch(true)
+    if (searchString) {
+      searchParams.set('search', searchString)
+      setSearchParams(searchParams)
+      setSearch(true)
+    } else {
+      searchParams.delete('search')
+      setSearchParams(searchParams)
+      setSearch(false)
+    }
     resetData()
   }
 
@@ -127,6 +147,7 @@ const Subjects = () => {
     _e: SyntheticEvent<Element, Event>,
     newValue: OptionType | null
   ) => {
+    if (newValue?.value === selectedCategory?.value) return
     setSelectedCategory(newValue)
     resetData()
     searchParams.set('categoryId', newValue?.value ?? '')
@@ -139,6 +160,22 @@ const Subjects = () => {
       void fetchCategories()
     }
   }, [fetchCategories])
+
+  useEffect(() => {
+    if (!categoriesResponse.length || !categoryId) return
+
+    const foundCategory = categoriesResponse.find(
+      (cat) => cat._id === categoryId
+    )
+    if (foundCategory) {
+      setSelectedCategory({
+        value: foundCategory._id,
+        title: foundCategory.name
+      })
+    }
+  }, [categoriesResponse, categoryId])
+
+  const handleOpenModal = () => openModal({ component: <CreateSubjectModal /> })
 
   return (
     <PageWrapper>
@@ -167,24 +204,27 @@ const Subjects = () => {
 
       <AppToolbar sx={styles.searchToolbar}>
         <AppAutoComplete
-          ListboxProps={{ style: { width: 200 } }}
           disabled={subjectNamesLoading}
-          label={''}
+          label={t('categoriesPage.title')}
           onChange={handleCategoryChange}
           options={categoryOptions}
+          sx={{ width: 200 }}
           value={selectedCategory}
         />
 
         <AppTextField
           errorMsg={''}
-          label={''}
+          label={t('categoriesPage.searchLabel')}
           onChange={(e) => {
             setSearch(false)
             setSearchString(e.target.value)
           }}
+          onKeyDown={handleKeyDown}
           size='medium'
+          sx={{ flex: 1 }}
           type='text'
           value={searchString}
+          variant='standard'
         />
 
         <IconButton onClick={onClear} sx={clearIconVisibility}>
@@ -200,14 +240,21 @@ const Subjects = () => {
           {t('common.search')}
         </Button>
       </AppToolbar>
-
-      <CardsList
-        btnText={t('categoriesPage.viewMore')}
-        cards={cards}
-        isExpandable={isExpandable}
-        loading={subjectsLoading || subjectNamesLoading}
-        onClick={loadMore}
-      />
+      {subjectsList.length === 0 ? (
+        <NotFoundResults
+          buttonText={t('errorMessages.buttonRequest', { name: 'subject' })}
+          description={t('errorMessages.tryAgainText', { name: 'subject' })}
+          onClick={handleOpenModal}
+        />
+      ) : (
+        <CardsList
+          btnText={t('categoriesPage.viewMore')}
+          cards={cards}
+          isExpandable={isExpandable}
+          loading={subjectsLoading || subjectNamesLoading}
+          onClick={loadMore}
+        />
+      )}
     </PageWrapper>
   )
 }

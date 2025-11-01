@@ -17,7 +17,9 @@ export const styles = {
   },
   searchToolbar: {
     borderRadius: '70px',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    display: 'flex',
+    backgroundColor: 'basic.white',
     gap: '20px'
   },
   showAllOffers: {

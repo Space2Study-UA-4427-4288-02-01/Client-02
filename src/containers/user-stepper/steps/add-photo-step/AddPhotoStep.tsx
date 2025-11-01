@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { useStepContext } from '~/context/step-context'
 import { styles } from '~/containers/user-stepper/steps/add-photo-step/AddPhotoStep.style'
 import { PhotoValuesInterface } from '~/context/types'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import CheckIcon from '@mui/icons-material/Check'
 
 interface AddPhotoStepProps {
   btnsBox?: React.ReactNode
@@ -16,6 +18,7 @@ const AddPhotoStep: FC<AddPhotoStepProps> = ({ btnsBox }) => {
   const { stepData, updatePhoto } = useStepContext()
   const { photo } = stepData.photo as PhotoValuesInterface
   const [preview, setPreview] = useState<string>('')
+  const [isPreviewLoaded, setIsPreviewLoaded] = useState<boolean>(false)
 
   useEffect(() => {
     if (!photo) {
@@ -25,7 +28,7 @@ const AddPhotoStep: FC<AddPhotoStepProps> = ({ btnsBox }) => {
 
     const objectUrl = URL.createObjectURL(photo)
     setPreview(objectUrl)
-
+    setIsPreviewLoaded(true)
     return () => URL.revokeObjectURL(objectUrl)
   }, [photo])
 
@@ -50,8 +53,12 @@ const AddPhotoStep: FC<AddPhotoStepProps> = ({ btnsBox }) => {
               <Box sx={styles.uploadBox}>
                 <label {...getRootProps()} htmlFor='file-upload'>
                   <input {...getInputProps()} id='file-upload' />
-                  <Typography sx={{ mb: '10px' }}>
+                  <Typography sx={styles.dropzone}>
+                    <CloudUploadIcon sx={styles.icon} />
                     {t('becomeTutor.photo.button')}
+                    {isPreviewLoaded ? (
+                      <CheckIcon color='success' sx={styles.icon} />
+                    ) : null}
                   </Typography>
                 </label>
               </Box>
