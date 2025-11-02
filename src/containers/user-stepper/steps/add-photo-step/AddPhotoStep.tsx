@@ -4,7 +4,7 @@ import Dropzone from 'react-dropzone'
 import { Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useStepContext } from '~/context/step-context'
-import { styles } from '~/containers/user-stepper/steps/add-photo-step/AddPhotoStep.style'
+import { styles } from './AddPhotoStep.style'
 import { PhotoValuesInterface } from '~/context/types'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import CheckIcon from '@mui/icons-material/Check'
@@ -50,17 +50,15 @@ const AddPhotoStep: FC<AddPhotoStepProps> = ({ btnsBox }) => {
             onDrop={(acceptedFiles) => updatePhoto({ photo: acceptedFiles[0] })}
           >
             {({ getRootProps, getInputProps }) => (
-              <Box sx={styles.uploadBox}>
-                <label {...getRootProps()} htmlFor='file-upload'>
-                  <input {...getInputProps()} id='file-upload' />
-                  <Typography sx={styles.dropzone}>
-                    <CloudUploadIcon sx={styles.icon} />
-                    {t('becomeTutor.photo.button')}
-                    {isPreviewLoaded ? (
-                      <CheckIcon color='success' sx={styles.icon} />
-                    ) : null}
-                  </Typography>
-                </label>
+              <Box sx={styles.uploadBox} {...getRootProps()}>
+                <input {...getInputProps()} id='file-upload' />
+                <Typography sx={styles.dropzone}>
+                  <CloudUploadIcon sx={styles.icon} />
+                  {t('becomeTutor.photo.button')}
+                  {isPreviewLoaded ? (
+                    <CheckIcon color='success' sx={styles.icon} />
+                  ) : null}
+                </Typography>
               </Box>
             )}
           </Dropzone>
