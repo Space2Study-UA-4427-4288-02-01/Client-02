@@ -48,9 +48,13 @@ export const styles = {
     minWidth: { xs: '44px' },
     p: { xs: '7px 12px', sm: '12px 24px' },
     ml: { xs: '5px', sm: '25px' }
+  },
+  listBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px'
+  },
+  pagination: {
+    mt: '30px'
   }
-  // listBox: {
-  //   flex: 1,
-  //   width: 100
-  // }
 }

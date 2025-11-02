@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Response, ServiceFunction } from '~/types'
 import useAxios from './use-axios'
 
 type UsePaginationProps<Data> = {
   service: ServiceFunction<Response<Data>, Params>
+  currentPage?: number
 }
 
 type Return<Data> = {
@@ -12,8 +13,9 @@ type Return<Data> = {
   totalPages: number
   list: Data[]
   isExpandable?: boolean
-  loadMore?: () => void
+  //loadMore?: () => void
   resetData: () => void
+  onPageChange: (event: ChangeEvent<unknown>, page: number) => void
 }
 
 export type Params = {
@@ -23,9 +25,10 @@ export type Params = {
 export type PaginationService<Data> = ServiceFunction<Response<Data>, Params>
 
 function usePagination<Data>({
-  service
+  service,
+  currentPage = 1
 }: UsePaginationProps<Data>): Return<Data> {
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(currentPage)
   const [totalPages, setTotalPages] = useState(1)
   const [list, setList] = useState<Data[]>([])
   const initialized = useRef(false)
@@ -40,6 +43,12 @@ function usePagination<Data>({
   //   initialized.current = false
   //   setPage((prevPage) => prevPage + 1)
   // }
+
+  const onPageChange = (event: ChangeEvent<unknown>, page: number) => {
+    console.log('onPageChange page:', page)
+    initialized.current = false
+    setPage(page)
+  }
 
   const resetData = () => {
     initialized.current = false
@@ -68,6 +77,7 @@ function usePagination<Data>({
     list,
     //isExpandable: page < totalPages,
     //loadMore,
+    onPageChange,
     resetData
   }
 }

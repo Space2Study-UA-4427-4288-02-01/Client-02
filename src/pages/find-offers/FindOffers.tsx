@@ -1,50 +1,41 @@
-import { SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Box, IconButton } from '@mui/material'
+
 import Button from '@mui/material/Button'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ClearIcon from '@mui/icons-material/Clear'
 import PageWrapper from '~/components/page-wrapper/PageWrapper'
 import AppTextField from '~/components/app-text-field/AppTextField'
-// import { subjectService } from '~/services/subject-service'
 import { offersService } from '~/services/offersService'
-// import { categoryService } from '~/services/category-service'
-// import { defaultResponses } from '~/constants'
-import {
-  ButtonVariantEnum,
-  // CategoryNameInterface,
-  // CategoryNamesResponse,
-  Offer,
-  //Response,
-  SizeEnum,
-  //SubjectInterface,
-  VisibilityEnum
-} from '~/types'
+import { ButtonVariantEnum, Offer, SizeEnum, VisibilityEnum } from '~/types'
 import AppAutoComplete, {
   OptionType
 } from '~/components/app-auto-complete/AppAutoComplete'
 import OfferRequestBlock from '~/containers/find-offer/offer-request-block/OfferRequestBlock'
 import TitleWithDescription from '~/components/title-with-description/TitleWithDescription'
-import { styles } from '~/pages/subjects/Subjects.styles'
-// import serviceIcon from '~/assets/img/student-home-page/service_icon.png'
+import { styles } from './FindOffers.styles'
 import DirectionLink from '~/components/direction-link/DirectionLink'
 import { authRoutes } from '~/router/constants/authRoutes'
-// import CardWithLink from '~/components/card-with-link/CardWithLink'
-// import CardsList from '~/components/cards-list/CardsList'
 import AppToolbar from '~/components/app-toolbar/AppToolbar'
-// import { getOpositeRole } from '~/utils/helper-functions'
-// import useAxios from '~/hooks/use-axios'
-// import { useAppSelector } from '~/hooks/use-redux'
-// import useLoadMore, { LoadMoreService, Params } from '~/hooks/use-load-more-new'
 import useCategoriesNames from '~/hooks/use-categories-names'
-// import useSubjects from '~/hooks/use-subject'
 import useSubjectsNames from '~/hooks/use-subjects-names'
 import usePagination, {
   PaginationService,
   Params
 } from '~/hooks/use-pagination'
+import OfferCard from '~/components/offer-card/OfferCard'
+import AppPagination from '~/components/app-pagination/AppPagination'
+import NotFoundResults from '~/components/not-found-results/NotFoundResults'
 
 const FindOffers = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -52,8 +43,9 @@ const FindOffers = () => {
   // const { userRole } = useAppSelector((state) => state.appMain)
   const categoryId = searchParams.get('categoryId') ?? ''
   const subjectId = searchParams.get('subjectId') ?? ''
-  const [searchString, setSearchString] = useState('')
-  const [search, setSearch] = useState(false)
+  const initialSearch = searchParams.get('search') ?? ''
+  const [searchString, setSearchString] = useState(initialSearch)
+  const [search, setSearch] = useState(Boolean(initialSearch))
   const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
     null
   )
@@ -61,17 +53,6 @@ const FindOffers = () => {
     null
   )
   const initialized = useRef(false)
-
-  // const getSubjects = useCallback(
-  //   ({ page }: Params) => {
-  //     return subjectService.getSubjects({
-  //       ...(categoryId && { categoryId }),
-  //       ...(page && { page }),
-  //       ...(search && searchString && { search: searchString })
-  //     })
-  //   },
-  //   [categoryId, searchString, search]
-  // )
 
   const getOffers = useCallback(
     ({ page }: Params) => {
@@ -85,21 +66,6 @@ const FindOffers = () => {
     [categoryId, subjectId, searchString, search]
   )
 
-  // const getCategoriesNames = async () => {
-  //   return await categoryService.getCategoriesNames()
-  // }
-
-  // const {
-  //   loading: subjectNamesLoading,
-  //   response: categoriesResponse,
-  //   fetchData: fetchCategories
-  // } = useAxios<CategoryNamesResponse, null, CategoryNameInterface[]>({
-  //   service: getCategoriesNames,
-  //   transform: (data) => data.data,
-  //   fetchOnMount: false,
-  //   defaultResponse: defaultResponses.array
-  // })
-
   const {
     loading: categoriesLoading,
     response: categoryResponse = [],
@@ -112,22 +78,16 @@ const FindOffers = () => {
     fetchData: fetchSubjects
   } = useSubjectsNames({ category: selectedCategory?.value as string })
 
-  // const {
-  //   loading: offersLoading,
-  //   response: offersResponse,
-  //   fetchData: fetchOffers
-  // } = useAxios<Response<Offer>>({
-  //   service: getOffers,
-  //   fetchOnMount: false,
-  //   defaultResponse: { data: [] }
-  // })
-
   const {
     loading: offersLoading,
     list: offersList,
-    resetData
+    page: currentPage,
+    totalPages,
+    resetData,
+    onPageChange
   } = usePagination<Offer>({
-    service: getOffers as unknown as PaginationService<Offer>
+    service: getOffers as unknown as PaginationService<Offer>,
+    currentPage: parseInt(searchParams.get('page') || '1', 10)
   })
 
   const categoryOptions: OptionType[] = categoryResponse.map((category) => ({
@@ -135,7 +95,7 @@ const FindOffers = () => {
     title: category.name
   }))
 
-  const subjectNameOptions: OptionType[] = subjectsResponse.map((subject) => ({
+  const subjectOptions: OptionType[] = subjectsResponse.map((subject) => ({
     value: subject._id,
     title: subject.name
   }))
@@ -145,21 +105,9 @@ const FindOffers = () => {
 
   // const oppositeRole = getOpositeRole(userRole)
 
-  // const cards = subjectsList.map((item: SubjectInterface) => {
-  //   return (
-  //     <CardWithLink
-  //       description={`${item.totalOffers[oppositeRole]} ${t(
-  //         'categoriesPage.offers'
-  //       )}`}
-  //       img={serviceIcon}
-  //       key={item._id}
-  //       link={`${authRoutes.categories.path}?categoryId=${categoryId}&subjectId=${item._id}`}
-  //       title={item.name}
-  //     />
-  //   )
-  // })
-
-  console.log('offersList', offersList)
+  const cards = offersList?.map((offer: Offer) => {
+    return <OfferCard key={offer._id} offer={offer} />
+  })
 
   const clearIconVisibility = {
     visibility: search ? VisibilityEnum.Visible : VisibilityEnum.Hidden
@@ -169,9 +117,16 @@ const FindOffers = () => {
     resetData()
     setSearch(false)
     setSearchString('')
+    searchParams.delete('search')
+    searchParams.set('page', '1')
+    setSearchParams(searchParams)
   }
 
   const handleSearch = () => {
+    if (searchString) {
+      searchParams.set('search', searchString)
+      setSearchParams(searchParams)
+    }
     setSearch(true)
     resetData()
   }
@@ -180,9 +135,16 @@ const FindOffers = () => {
     _e: SyntheticEvent<Element, Event>,
     newValue: OptionType | null
   ) => {
+    console.log('handleCategoryChange newValue:', newValue)
     setSelectedCategory(newValue)
     resetData()
-    searchParams.set('categoryId', newValue?.value ?? '')
+
+    if (newValue) {
+      searchParams.set('categoryId', newValue.value)
+    } else {
+      searchParams.delete('categoryId')
+    }
+
     setSearchParams(searchParams)
   }
 
@@ -192,7 +154,19 @@ const FindOffers = () => {
   ) => {
     setSelectedSubject(newValue)
     resetData()
-    searchParams.set('subjectId', newValue?.value ?? '')
+
+    if (newValue) {
+      searchParams.set('subjectId', newValue.value)
+    } else {
+      searchParams.delete('subjectId')
+    }
+
+    setSearchParams(searchParams)
+  }
+
+  const handlePageChange = (event: ChangeEvent<unknown>, newPage: number) => {
+    onPageChange(event, newPage)
+    searchParams.set('page', newPage.toString())
     setSearchParams(searchParams)
   }
 
@@ -208,6 +182,29 @@ const FindOffers = () => {
       void fetchSubjects()
     }
   }, [selectedCategory, fetchSubjects])
+
+  useEffect(() => {
+    if (!categoryResponse.length || !categoryId) return
+
+    const foundCategory = categoryResponse.find((cat) => cat._id === categoryId)
+
+    if (foundCategory) {
+      setSelectedCategory({
+        value: foundCategory._id,
+        title: foundCategory.name
+      })
+    }
+  }, [categoryId, categoryResponse])
+
+  useEffect(() => {
+    if (!subjectOptions.length || !subjectId) return
+
+    const foundSubject = subjectOptions.find((sub) => sub.value === subjectId)
+
+    if (foundSubject) {
+      setSelectedSubject(foundSubject)
+    }
+  }, [subjectId, subjectOptions])
 
   return (
     <PageWrapper>
@@ -246,7 +243,7 @@ const FindOffers = () => {
           disabled={categoriesLoading || subjectsLoading || offersLoading}
           label={t('subjectsPage.subjects.title', { category: categoryName })}
           onChange={handleSubjectChange}
-          options={subjectNameOptions}
+          options={subjectOptions}
           sx={{ width: 200 }}
           value={selectedSubject}
         />
@@ -278,13 +275,20 @@ const FindOffers = () => {
         </Button>
       </AppToolbar>
 
-      {/* <CardsList
-        btnText={t('categoriesPage.viewMore')}
-        cards={cards}
-        isExpandable={isExpandable}
-        loading={subjectsLoading || subjectNamesLoading}
-        onClick={loadMore}
-      /> */}
+      {cards?.length > 0 ? (
+        <Box sx={styles.listBox}>{cards}</Box>
+      ) : (
+        <NotFoundResults
+          description={t('errorMessages.tryAgainText', { name: 'offers' })}
+        />
+      )}
+
+      <AppPagination
+        onChange={handlePageChange}
+        page={currentPage}
+        pageCount={totalPages}
+        sx={styles.pagination}
+      />
     </PageWrapper>
   )
 }
