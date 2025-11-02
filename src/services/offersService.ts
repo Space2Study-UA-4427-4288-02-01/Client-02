@@ -9,6 +9,7 @@ type Params = {
   subjectId?: string
   page?: number
   search?: string
+  languages?: string
 }
 
 export const offersService = {

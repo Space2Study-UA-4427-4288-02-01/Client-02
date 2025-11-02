@@ -9,9 +9,7 @@ import {
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Box, IconButton } from '@mui/material'
-
 import Button from '@mui/material/Button'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ClearIcon from '@mui/icons-material/Clear'
 import PageWrapper from '~/components/page-wrapper/PageWrapper'
@@ -40,7 +38,6 @@ import NotFoundResults from '~/components/not-found-results/NotFoundResults'
 const FindOffers = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { t } = useTranslation()
-  // const { userRole } = useAppSelector((state) => state.appMain)
   const categoryId = searchParams.get('categoryId') ?? ''
   const subjectId = searchParams.get('subjectId') ?? ''
   const initialSearch = searchParams.get('search') ?? ''
@@ -52,6 +49,7 @@ const FindOffers = () => {
   const [selectedSubject, setSelectedSubject] = useState<OptionType | null>(
     null
   )
+
   const initialized = useRef(false)
 
   const getOffers = useCallback(
@@ -103,8 +101,6 @@ const FindOffers = () => {
   const categoryName =
     categoryResponse.find((cat) => cat._id === categoryId)?.name || ''
 
-  // const oppositeRole = getOpositeRole(userRole)
-
   const cards = offersList?.map((offer: Offer) => {
     return <OfferCard key={offer._id} offer={offer} />
   })
@@ -143,8 +139,11 @@ const FindOffers = () => {
       searchParams.set('categoryId', newValue.value)
     } else {
       searchParams.delete('categoryId')
+      searchParams.delete('subjectId')
+      setSelectedSubject(null)
     }
 
+    searchParams.set('page', '1')
     setSearchParams(searchParams)
   }
 
@@ -161,6 +160,7 @@ const FindOffers = () => {
       searchParams.delete('subjectId')
     }
 
+    searchParams.set('page', '1')
     setSearchParams(searchParams)
   }
 
@@ -219,13 +219,8 @@ const FindOffers = () => {
       <Box sx={styles.navigation}>
         <DirectionLink
           before={<ArrowBackIcon fontSize={SizeEnum.Small} />}
-          linkTo={authRoutes.categories.path}
-          title={t('subjectsPage.subjects.backToAllCategories')}
-        />
-        <DirectionLink
-          after={<ArrowForwardIcon fontSize={SizeEnum.Small} />}
-          linkTo={authRoutes.categories.path}
-          title={t('subjectsPage.subjects.showAllOffers')}
+          linkTo={authRoutes.subjects.path}
+          title={t('findOfferPage.backToAllSubjects')}
         />
       </Box>
 

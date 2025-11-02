@@ -56,5 +56,20 @@ export const styles = {
   },
   pagination: {
     mt: '30px'
+  },
+  contentContainer: {
+    display: 'flex',
+    gap: '30px'
+  },
+  filtersPanel: {
+    width: '240px',
+    mb: '20px'
+  },
+  btn: {
+    display: 'block',
+    width: '100%',
+    minWidth: { xs: '44px' },
+    p: { xs: '7px 12px', sm: '12px 24px' },
+    mt: '20px'
   }
 }

@@ -13,7 +13,6 @@ type Return<Data> = {
   totalPages: number
   list: Data[]
   isExpandable?: boolean
-  //loadMore?: () => void
   resetData: () => void
   onPageChange: (event: ChangeEvent<unknown>, page: number) => void
 }
@@ -39,13 +38,7 @@ function usePagination<Data>({
     defaultResponse: { data: [] }
   })
 
-  // const loadMore = () => {
-  //   initialized.current = false
-  //   setPage((prevPage) => prevPage + 1)
-  // }
-
   const onPageChange = (event: ChangeEvent<unknown>, page: number) => {
-    console.log('onPageChange page:', page)
     initialized.current = false
     setPage(page)
   }
@@ -65,7 +58,6 @@ function usePagination<Data>({
   }, [fetchData, page])
 
   useEffect(() => {
-    // setList((prevList) => [...prevList, ...(response?.data ?? [])])
     setList(response?.data ?? [])
     setTotalPages(response?.totalPages || 1)
   }, [response])
@@ -75,8 +67,6 @@ function usePagination<Data>({
     page,
     totalPages,
     list,
-    //isExpandable: page < totalPages,
-    //loadMore,
     onPageChange,
     resetData
   }

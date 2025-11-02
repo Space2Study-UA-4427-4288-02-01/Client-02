@@ -107,7 +107,7 @@ const Subjects = () => {
         )}`}
         img={serviceIcon}
         key={item._id}
-        link={`${authRoutes.categories.path}?categoryId=${categoryId}&subjectId=${item._id}`}
+        link={`${authRoutes.findOffers.path}?categoryId=${categoryId}&subjectId=${item._id}`}
         title={item.name}
       />
     )
