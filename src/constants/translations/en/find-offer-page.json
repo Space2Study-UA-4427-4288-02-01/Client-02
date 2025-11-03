@@ -58,6 +58,9 @@
     "price": {
       "label": "/HOUR",
       "currency": "UAH"
+    },
+    "authorInfo": {
+      "reviews": "reviews"
     }
   }
 }

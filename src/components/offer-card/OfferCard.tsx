@@ -6,12 +6,15 @@ import {
   CardContent,
   Chip,
   Typography,
-  Avatar
-  // Rating
+  Avatar,
+  Rating
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import LanguageIcon from '@mui/icons-material/Language'
 import { ButtonVariantEnum, Offer, SizeEnum } from '~/types'
 import { styles } from './OfferCard.styles'
+import { getOpositeRole } from '~/utils/helper-functions'
+import { useAppSelector } from '~/hooks/use-redux'
 
 interface OfferCardProps {
   offer: Offer
@@ -19,30 +22,26 @@ interface OfferCardProps {
 
 const OfferCard: FC<OfferCardProps> = ({ offer }) => {
   const { t } = useTranslation()
-  const {
-    title,
-    description,
-    author,
-    price,
-    proficiencyLevel,
-    languages
-    // subject,
-    // category
-  } = offer
+  const { userRole } = useAppSelector((state) => state.appMain)
+  const { title, description, author, price, proficiencyLevel, languages } =
+    offer
+
+  const oppositeRole = getOpositeRole(userRole)
 
   const fullName = `${author.firstName} ${author.lastName}`
-  // const rating = (author.averageRating || 0) as unknown as number
-  // const reviewsCount = (author.totalReviews || 0) as unknown as number
+  const rating = author.averageRating[oppositeRole]
+  const reviewsCount = author.totalReviews[oppositeRole]
 
   // Extract author info section to reduce nesting
   const authorInfo = (
     <Box sx={styles.authorInfo}>
       <Typography sx={styles.authorName}>{fullName}</Typography>
-      {/* <Box sx={styles.rating}>
+      <Box sx={styles.rating}>
         <Rating precision={0.1} readOnly size='small' value={rating} />
-        <Typography sx={styles.ratingText}>{rating}</Typography>
-        <Typography sx={styles.reviewsCount}>{reviewsCount} reviews</Typography>
-      </Box> */}
+        <Typography sx={styles.reviewsCount}>
+          {reviewsCount} {t('findOfferPage.offerCard.authorInfo.reviews')}
+        </Typography>
+      </Box>
     </Box>
   )
 
@@ -90,7 +89,12 @@ const OfferCard: FC<OfferCardProps> = ({ offer }) => {
     <Box sx={styles.tags}>
       <Chip label={proficiencyLevel} size='small' sx={styles.chip} />
       {languages.map((language, index) => (
-        <Chip key={index} label={language} size='small' sx={styles.chip} />
+        <Chip
+          key={index}
+          label={language}
+          size='small'
+          sx={{ ...styles.chip, ...styles.langChip }}
+        />
       ))}
     </Box>
   )
@@ -98,9 +102,7 @@ const OfferCard: FC<OfferCardProps> = ({ offer }) => {
   // Extract languages section
   const languagesSection = (
     <Box sx={styles.languagesSection}>
-      <Typography component='span' sx={styles.languagesIcon}>
-        🌐
-      </Typography>
+      <LanguageIcon sx={styles.languagesIcon} />
       <Typography sx={styles.languagesText}>{languages.join(', ')}</Typography>
     </Box>
   )

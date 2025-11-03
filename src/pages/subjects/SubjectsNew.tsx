@@ -197,7 +197,7 @@ const Subjects = () => {
         />
         <DirectionLink
           after={<ArrowForwardIcon fontSize={SizeEnum.Small} />}
-          linkTo={authRoutes.categories.path}
+          linkTo={authRoutes.findOffers.path}
           title={t('subjectsPage.subjects.showAllOffers')}
         />
       </Box>

@@ -10,7 +10,6 @@ export const styles = {
     cursor: 'pointer',
     '&:hover': {
       borderColor: 'primary.500',
-      //boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
       transform: 'translateY(-2px)'
     }
   },
@@ -56,7 +55,8 @@ export const styles = {
   },
   rating: {
     display: 'flex',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     gap: '4px'
   },
   ratingText: {
@@ -68,11 +68,7 @@ export const styles = {
     typography: 'body2',
     color: 'primary.600'
   },
-  priceContainer: {
-    // display: 'flex',
-    // alignItems: 'baseline',
-    // gap: '4px'
-  },
+  priceContainer: {},
   price: {
     typography: 'h4',
     fontWeight: 500,
@@ -102,11 +98,16 @@ export const styles = {
     marginBottom: '12px'
   },
   chip: {
-    backgroundColor: 'primary.100',
+    backgroundColor: 'success.200',
     color: 'primary.700',
-    fontWeight: 500,
+    fontWeight: 600,
     fontSize: '12px',
-    height: '24px'
+    height: '24px',
+    textTransform: 'uppercase'
+  },
+  langChip: {
+    backgroundColor: 'success.100',
+    fontWeight: 400
   },
   description: {
     typography: 'body2',
@@ -129,7 +130,8 @@ export const styles = {
   },
   languagesText: {
     typography: 'body2',
-    color: 'primary.600'
+    color: 'primary.600',
+    lineHeight: 1
   },
   btn: {
     display: 'block',

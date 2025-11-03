@@ -129,7 +129,7 @@ const Categories = () => {
       <Box sx={styles.navigation}>
         <DirectionLink
           after={<ArrowForwardIcon fontSize={SizeEnum.Small} />}
-          linkTo={authRoutes.categories.path}
+          linkTo={authRoutes.findOffers.path}
           title={t('categoriesPage.showAllOffers')}
         />
       </Box>
