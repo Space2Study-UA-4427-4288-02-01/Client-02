@@ -1,16 +1,4 @@
 export const styles = {
-  // categoryInput: {
-  //   width: '100%',
-  //   maxWidth: { sm: '160px', md: '220px' },
-  //   mr: '30px',
-  //   mb: { xs: '20px', sm: '0' },
-  //   '& .MuiOutlinedInput-root': {
-  //     padding: '5px 9px'
-  //   },
-  //   label: {
-  //     lineHeight: '20px'
-  //   }
-  // },
   navigation: {
     display: 'flex',
     justifyContent: 'space-between'
@@ -22,15 +10,6 @@ export const styles = {
     backgroundColor: 'basic.white',
     gap: '20px'
   },
-  // showAllOffers: {
-  //   display: 'flex',
-  //   justifyContent: 'end',
-  //   alignItems: 'center',
-  //   columnGap: '10px',
-  //   color: 'primary.500',
-  //   textDecoration: 'none',
-  //   m: '0 45px 20px 0'
-  // },
   titleWithDescription: {
     wrapper: {
       my: '30px',

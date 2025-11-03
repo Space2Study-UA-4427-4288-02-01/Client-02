@@ -12,7 +12,6 @@ type Return<Data> = {
   page: number
   totalPages: number
   list: Data[]
-  isExpandable?: boolean
   resetData: () => void
   onPageChange: (event: ChangeEvent<unknown>, page: number) => void
 }

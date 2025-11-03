@@ -131,7 +131,6 @@ const FindOffers = () => {
     _e: SyntheticEvent<Element, Event>,
     newValue: OptionType | null
   ) => {
-    console.log('handleCategoryChange newValue:', newValue)
     setSelectedCategory(newValue)
     resetData()
 
@@ -139,11 +138,11 @@ const FindOffers = () => {
       searchParams.set('categoryId', newValue.value)
     } else {
       searchParams.delete('categoryId')
-      searchParams.delete('subjectId')
-      setSelectedSubject(null)
     }
 
+    searchParams.delete('subjectId')
     searchParams.set('page', '1')
+    setSelectedSubject(null)
     setSearchParams(searchParams)
   }
 
