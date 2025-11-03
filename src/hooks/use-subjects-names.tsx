@@ -6,7 +6,7 @@ import { subjectService } from '~/services/subject-service'
 import { ErrorResponse, SubjectNameInterface } from '~/types'
 
 interface UseSubjectsNamesProps<T> {
-  category: string | null
+  category?: string | null
   fetchOnMount?: boolean
   transform?: (data: SubjectNameInterface[]) => T[]
 }
@@ -20,13 +20,23 @@ interface UseSubjectsNamesResult<T> {
 
 const useSubjectsNames = <T = SubjectNameInterface,>({
   category,
-  fetchOnMount = true,
+  fetchOnMount = false,
   transform
 }: UseSubjectsNamesProps<T>): UseSubjectsNamesResult<T> => {
-  const getSubjectsNames = useCallback(
-    () => subjectService.getSubjectsNames(category),
-    [category]
-  )
+  // const getSubjectsNames = useCallback(
+  //   () => subjectService.getSubjectsNames(category),
+  //   [category]
+  // )
+
+  const getSubjectsNames = useCallback(async () => {
+    const res = await subjectService.getSubjectsNames(
+      category ? category : null
+    )
+    return {
+      ...res,
+      data: res.data.data
+    }
+  }, [category])
 
   const { loading, response, fetchData, error } = useAxios<
     SubjectNameInterface[],

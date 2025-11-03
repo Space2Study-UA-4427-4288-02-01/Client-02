@@ -49,5 +49,18 @@
   },
   "otherOffers":{
     "title":"Other offers"
+  },
+  "offerCard": {
+    "buttons": {
+      "showDetails": "Show Details",
+      "sendMessage": "Send Message"
+    },
+    "price": {
+      "label": "/HOUR",
+      "currency": "UAH"
+    },
+    "authorInfo": {
+      "reviews": "reviews"
+    }
   }
 }

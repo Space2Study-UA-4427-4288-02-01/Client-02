@@ -8,11 +8,11 @@ import AppButton from '~/components/app-button/AppButton'
 import AppAutoComplete, {
   OptionType
 } from '~/components/app-auto-complete/AppAutoComplete'
-import useSubjects from '~/hooks/use-subject'
 import { useStepContext } from '~/context/step-context'
 import { SubjectValuesInterface } from '~/context/types'
 import AppChipList from '~/components/app-chips-list/AppChipList'
 import useCategoriesNames from '~/hooks/use-categories-names'
+import useSubjectsNames from '~/hooks/use-subjects-names'
 
 interface SubjectsStepProps {
   btnsBox?: React.ReactNode
@@ -41,7 +41,7 @@ const SubjectsStep: FC<SubjectsStepProps> = ({ btnsBox }) => {
     loading: subjectsLoading,
     response: subjectsResponse = [],
     fetchData: fetchSubjects
-  } = useSubjects({ category: selectedCategory })
+  } = useSubjectsNames({ category: selectedCategory?.value as string })
 
   const handleCategoryChange = (
     _e: SyntheticEvent<Element, Event>,

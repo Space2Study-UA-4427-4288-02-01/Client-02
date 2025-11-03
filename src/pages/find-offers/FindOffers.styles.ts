@@ -1,16 +1,4 @@
 export const styles = {
-  categoryInput: {
-    width: '100%',
-    maxWidth: { sm: '160px', md: '220px' },
-    mr: '30px',
-    mb: { xs: '20px', sm: '0' },
-    '& .MuiOutlinedInput-root': {
-      padding: '5px 9px'
-    },
-    label: {
-      lineHeight: '20px'
-    }
-  },
   navigation: {
     display: 'flex',
     justifyContent: 'space-between'
@@ -21,15 +9,6 @@ export const styles = {
     display: 'flex',
     backgroundColor: 'basic.white',
     gap: '20px'
-  },
-  showAllOffers: {
-    display: 'flex',
-    justifyContent: 'end',
-    alignItems: 'center',
-    columnGap: '10px',
-    color: 'primary.500',
-    textDecoration: 'none',
-    m: '0 45px 20px 0'
   },
   titleWithDescription: {
     wrapper: {
@@ -48,5 +27,28 @@ export const styles = {
     minWidth: { xs: '44px' },
     p: { xs: '7px 12px', sm: '12px 24px' },
     ml: { xs: '5px', sm: '25px' }
+  },
+  listBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px'
+  },
+  pagination: {
+    mt: '30px'
+  },
+  contentContainer: {
+    display: 'flex',
+    gap: '30px'
+  },
+  filtersPanel: {
+    width: '240px',
+    mb: '20px'
+  },
+  btn: {
+    display: 'block',
+    width: '100%',
+    minWidth: { xs: '44px' },
+    p: { xs: '7px 12px', sm: '12px 24px' },
+    mt: '20px'
   }
 }
